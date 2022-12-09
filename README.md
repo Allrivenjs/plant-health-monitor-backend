@@ -1,7 +1,10 @@
+### Setup
+To run the app locally, the datebase has to be setup
+>Exec migrations: \
+`docker compose up -d`
 
 >Exec migrations: \
-`npm run typeorm -- migration:run -d ./src/data-source.ts`
-
+`yarn typeorm -- migration:run -d ./src/data-source.ts`
 
 >Init server project: \
 `yarn start`

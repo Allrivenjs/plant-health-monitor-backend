@@ -1,0 +1,1 @@
+CREATE DATABASE IF NOT EXISTS plant_health_monitor_db;
