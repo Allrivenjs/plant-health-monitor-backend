@@ -1,20 +1,41 @@
 import { AppDataSource } from "./data-source"
 import { User } from "./entity/User"
 
-AppDataSource.initialize().then(async () => {
-    console.log("Inserting a new user into the database...")
-    const user = new User()
-    user.name = "test"
-    user.email = "test@gmail.com"
-    user.password = "password"
-    user.created_at = new Date()
-    user.updated_at = new Date()
-    await AppDataSource.manager.save(user)
-    console.log("Loading users from the database...")
-    const users = await AppDataSource.manager.find(User)
-    console.log("Loaded users: ", users)
-    console.log("Here you can setup and run express / fastify / any other framework.")
+import http from 'http';
+import express from 'express';
 
+import { Server } from 'socket.io';
+
+const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server);
+
+AppDataSource.initialize().then(async () => {
 }).catch(error => console.log(error))
 
- AppDataSource.initialize().then(async () => {}).catch(error => console.log(error));
+AppDataSource.initialize().then(async () => {}).catch(error => console.log(error));
+
+app.get('/', (req, res) => {
+  console.log('hello');
+  res.send({
+    hello: 'world',
+  });
+});
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('test', (msg) => {
+    console.log('message: ' + msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
+
