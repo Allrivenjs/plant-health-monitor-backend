@@ -1,27 +1,22 @@
-import { AppDataSource } from "./data-source"
-import { User } from "./entity/User"
+import { AppDataSource } from './data-source';
 
 import http from 'http';
 import express from 'express';
 
 import { Server } from 'socket.io';
 
+import { setAppApiController } from './controller';
+
 const app = express();
 const server = http.createServer(app);
 
 const io = new Server(server);
 
-AppDataSource.initialize().then(async () => {
-}).catch(error => console.log(error))
+AppDataSource.initialize()
+  .then(async () => {})
+  .catch((error) => console.log(error));
 
-AppDataSource.initialize().then(async () => {}).catch(error => console.log(error));
-
-app.get('/', (req, res) => {
-  console.log('hello');
-  res.send({
-    hello: 'world',
-  });
-});
+setAppApiController(app);
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -38,4 +33,3 @@ io.on('connection', (socket) => {
 server.listen(3000, () => {
   console.log('listening on *:3000');
 });
-
