@@ -1,13 +1,12 @@
 import { Request, Response, Router } from 'express';
 
-import { AppDataSource } from '../data-source';
-import { User } from '../entity';
+import { UserServices } from './userService';
 
-const userRepository = AppDataSource.getRepository(User);
+const userService = new UserServices();
 
 export const userController = Router();
 
 userController.get('/', async (req: Request, res: Response) => {
-  const users = await userRepository.find();
-  res.json({ hello: 'user' });
+  const users = await userService.findAllUsers();
+  res.json({ users: users });
 });

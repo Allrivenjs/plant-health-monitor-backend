@@ -14,27 +14,26 @@ declare global {
   }
 }
 
-
 // Create a user
-authController.post('/login',
-	passport.authenticate('local', { session: false }),
-	async (req, res, next) => {
-		try {
-			const user = req.user;
+authController.post(
+  '/login',
+  passport.authenticate('local', { session: false }),
+  async (req, res, next) => {
+    try {
+      const user = req.user;
 
-			const payload = {
-				sub: user.email,
-			};
+      const payload = {
+        sub: user.email,
+      };
 
-			const token = jwt.sign(payload, 'secret');
+      const token = jwt.sign(payload, 'secret');
 
-			res.json({
-				user: req.user,
-				token,
-			});
-
-		}catch(error) {
-			next(error);
-		};
-	},
+      res.json({
+        user: req.user,
+        token,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 );

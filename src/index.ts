@@ -7,14 +7,25 @@ import { Server } from 'socket.io';
 
 import { setAppApiController } from './controller';
 
+import { setupPassportStrategies } from './auth/strategies';
+
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
 const server = http.createServer(app);
 
 const io = new Server(server);
 
+
+
 AppDataSource.initialize()
   .then(async () => {})
   .catch((error) => console.log(error));
+
+
+setupPassportStrategies();
 
 setAppApiController(app);
 

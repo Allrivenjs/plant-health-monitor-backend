@@ -12,4 +12,8 @@ export class UserServices {
   async findByEmail(email: string) {
     return this.userEntity.findOneBy({email});
   }
+
+  async findAllUsers() {
+    return this.userEntity.find();
+  }
 };
