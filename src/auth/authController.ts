@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 
 import passport from 'passport';
 
+import { config } from '../config';
+
 export const authController = Router();
 
 declare global {
@@ -26,7 +28,7 @@ authController.post(
         sub: user.email,
       };
 
-      const token = jwt.sign(payload, 'secret');
+      const token = jwt.sign(payload, config.secret);
 
       res.json({
         user: req.user,

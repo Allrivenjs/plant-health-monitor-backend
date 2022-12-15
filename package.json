@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Allrivenjs/-plant-health-monitor-backend#readme",
   "dependencies": {
     "@hapi/boom": "^10.0.0",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jsonwebtoken": "^8.5.1",
     "mysql": "^2.14.1",

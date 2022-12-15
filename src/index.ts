@@ -8,6 +8,7 @@ import { Server } from 'socket.io';
 import { setAppApiController } from './controller';
 
 import { setupPassportStrategies } from './auth/strategies';
+import { config } from './config';
 
 const app = express();
 
@@ -41,6 +42,6 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3000, () => {
-  console.log('listening on *:3000');
+server.listen(config.appPort, () => {
+  console.log('listening on *:', config.appPort);
 });

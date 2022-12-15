@@ -1,15 +1,16 @@
 import 'reflect-metadata';
 
 import { DataSource } from 'typeorm';
+import { config } from './config';
 
 export const AppDataSource = new DataSource({
   migrationsTableName: 'migrations',
   type: 'mysql',
-  host: 'localhost',
-  port: 3312,
-  username: 'root',
-  password: 'secret',
-  database: 'plant_health_monitor_db',
+  host: config.dbHost,
+  port: config.dbPort,
+  username: config.dbUsername,
+  password: config.dbPassword,
+  database: config.dbName,
   synchronize: false,
   logging: false,
   entities: ['src/entity/**/*{.ts,.js}'],
