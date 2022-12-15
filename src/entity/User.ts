@@ -1,28 +1,26 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany  } from "typeorm"
-import {Garden} from "./Garden";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Garden } from './Garden';
 
 @Entity()
 export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column('varchar')
+  name: string;
 
-    @Column()
-    name: string
+  @Column('varchar')
+  email: string;
 
-    @Column()
-    email: string
+  @Column('varchar')
+  password: string;
 
-    @Column()
-    password: string
+  @OneToMany(() => Garden, (garden) => garden.user)
+  garden: Garden[];
 
-    @OneToMany(() => Garden, garden => garden.user)
-    garden: Garden[]
+  @Column('timestamp', {default: new Date()})
+  created_at: Date;
 
-    @Column()
-    created_at: Date
-
-    @Column()
-    updated_at: Date
-
+  @Column('timestamp', {nullable: true})
+  updated_at: Date;
 }

@@ -5,6 +5,12 @@ import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
 import { config } from '../config';
+import { registerUserSchema } from './authSchema';
+import { validatorHandler } from '../middlewares';
+import { User } from '../entity';
+import { UserServices } from '../user/userService';
+
+const userService = new UserServices();
 
 export const authController = Router();
 
@@ -16,7 +22,7 @@ declare global {
   }
 }
 
-// Create a user
+// login a user
 authController.post(
   '/login',
   passport.authenticate('local', { session: false }),
@@ -33,6 +39,31 @@ authController.post(
       res.json({
         user: req.user,
         token,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// register a user
+authController.post(
+  '/register',
+  validatorHandler(registerUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { email, password, name } = req.body;
+
+      const newUser = new User();
+      newUser.name = name;
+      newUser.email = email;
+      newUser.password = password;
+      newUser.created_at = new Date();
+
+      userService.createUser(newUser);
+
+      res.json({
+        user: req.body,
       });
     } catch (error) {
       next(error);
