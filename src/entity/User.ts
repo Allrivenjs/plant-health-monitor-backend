@@ -9,7 +9,7 @@ export class User {
   @Column('varchar')
   name: string;
 
-  @Column('varchar')
+  @Column('varchar', {unique: true})
   email: string;
 
   @Column('varchar')
@@ -21,6 +21,6 @@ export class User {
   @Column('timestamp', {default: new Date()})
   created_at: Date;
 
-  @Column('timestamp', {nullable: true})
+  @Column('timestamp', {default: new Date()})
   updated_at: Date;
 }

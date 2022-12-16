@@ -1,4 +1,5 @@
 import { config } from './config';
+import cors from 'cors';
 
 import http from 'http';
 import express from 'express';
@@ -19,6 +20,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors());
 
 const server = http.createServer(app);
 
@@ -44,6 +46,10 @@ io.on('connection', (socket) => {
 
   socket.on('test', (msg) => {
     console.log('message: ' + msg);
+  });
+
+  socket.on('message', (msg) => {
+    console.log('message: ' + JSON.stringify(msg));
   });
 
   socket.on('disconnect', () => {

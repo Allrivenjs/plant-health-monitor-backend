@@ -59,11 +59,19 @@ authController.post(
       newUser.email = email;
       newUser.password = password;
       newUser.created_at = new Date();
+      newUser.updated_at = new Date();
 
-      userService.createUser(newUser);
+      await userService.createUser(newUser);
+
+      const payload = {
+        sub: newUser.email,
+      };
+
+      const token = jwt.sign(payload, config.secret);
 
       res.json({
         user: req.body,
+        token,
       });
     } catch (error) {
       next(error);
