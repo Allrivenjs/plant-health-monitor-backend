@@ -78,3 +78,19 @@ authController.post(
     }
   }
 );
+
+authController.get(
+  '/verify',
+  passport.authenticate('jwt', { session: false }),
+  async (req, res, next) => {
+    try {
+      const user = await userService.findByEmail(req.user.email);
+
+      res.json({
+        user: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
