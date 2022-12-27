@@ -10,8 +10,8 @@ export class GardenMigration1670553827979 implements MigrationInterface {
             min_temperature INTEGER NOT NULL,
             max_temperature INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
-            created_at DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            created_at DATE NOT NULL,
+            updated_at DATE NOT NULL,
             FOREIGN KEY (user_id) REFERENCES user(id)
         )`);
   }
