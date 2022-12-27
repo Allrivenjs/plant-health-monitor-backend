@@ -9,6 +9,10 @@ export class UserServices {
     this.userEntity = AppDataSource.getRepository(User);
   }
 
+  async findById(id: number) {
+    return this.userEntity.findOneBy({id});
+  }
+
   async findByEmail(email: string) {
     return this.userEntity.findOneBy({email});
   }

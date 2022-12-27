@@ -1,46 +1,53 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
-import {User} from "./User";
-import {Action} from "./Action";
-import {GardenInformation} from "./GardenInformation";
-import {Notifications} from "./Notifications";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
+import { User } from './User';
+import { Action } from './Action';
+import { GardenInformation } from './GardenInformation';
+import { Notifications } from './Notifications';
 
 @Entity()
 export class Garden {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column()
+  name: string;
 
-    @Column()
-    name: string
+  @Column()
+  image: string;
 
-    @Column()
-    image: string
+  @Column()
+  plant_type: string;
 
-    @Column()
-    plant_type: string
+  @Column()
+  min_temperature: number;
 
-    @Column()
-    min_temperature: number
+  @Column()
+  max_temperature: number;
 
-    @Column()
-    max_temperature: number
+  @ManyToOne(() => User, (user) => user.garden)
+  user: User;
 
-    @ManyToOne(() => User, user => user.garden)
-    user: User
+  @OneToMany(() => Action, (action) => action.garden)
+  actions!: Action[];
 
-    @OneToMany(() => Action, action => action.garden)
-    actions!: Action[]
+  @OneToMany(
+    () => GardenInformation,
+    (gardenInformation) => gardenInformation.garden
+  )
+  gardenInformation!: GardenInformation[];
 
-    @OneToMany(() => GardenInformation, gardenInformation => gardenInformation.garden)
-    gardenInformation!: GardenInformation[]
+  @OneToMany(() => Notifications, (notifications) => notifications.garden)
+  notifications!: Notifications[];
 
-    @OneToMany(() => Notifications, notifications => notifications.garden)
-    notifications!: Notifications[]
+  @Column('timestamp', { default: new Date() })
+  created_at: Date;
 
-    @Column()
-    created_at: Date
-
-    @Column()
-    updated_at: Date
-
+  @Column('timestamp', { default: new Date() })
+  updated_at: Date;
 }
