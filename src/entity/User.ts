@@ -18,9 +18,9 @@ export class User {
   @OneToMany(() => Garden, (garden) => garden.user)
   garden: Garden[];
 
-  @Column('timestamp', {default: new Date()})
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @Column('timestamp', {default: new Date()})
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 }

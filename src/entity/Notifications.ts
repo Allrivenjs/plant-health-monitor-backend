@@ -1,24 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm"
-import {User} from "./User";
-import {Action} from "./Action";
-import {Garden} from "./Garden";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+} from 'typeorm';
+
+import { Garden } from './Garden';
 
 @Entity()
 export class Notifications {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column()
+  type: string;
 
-    @Column()
-    type: string
+  @Column()
+  payload: string;
 
-    @Column()
-    payload: string
+  @Column()
+  read_at: Date;
 
-    @Column()
-    read_at: Date
+  @ManyToOne(() => Garden, (garden) => garden.notifications)
+  garden: Garden;
 
-    @ManyToOne(() => Garden, garden => garden.notifications)
-    garden: Garden
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }

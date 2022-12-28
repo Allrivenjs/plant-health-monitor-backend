@@ -1,24 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne  } from "typeorm"
-import {Action} from "./Action";
-
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Action } from './Action';
 
 @Entity()
 export class ActionType {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column()
+  image: string;
 
-    @Column()
-    image: string
+  @ManyToOne(() => Action, (action) => action.ActionType)
+  actions!: Action[];
 
-    @ManyToOne(() => Action, action => action.ActionType)
-    actions!: Action[]
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 
-    @Column()
-    created_at: Date
-
-    @Column()
-    updated_at: Date
-
-
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }

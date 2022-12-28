@@ -1,24 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne  } from "typeorm"
-import {Garden} from "./Garden";
-import {ActionType} from "./ActionType";
-
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Garden } from './Garden';
+import { ActionType } from './ActionType';
 
 @Entity()
 export class Action {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @PrimaryGeneratedColumn()
-    id!: number
+  @Column()
+  payload!: string;
 
-    @Column()
-    payload!: string
+  @ManyToOne(() => Garden, (garden) => garden.actions)
+  garden!: Garden;
 
-    @Column()
-    created_at!: Date
+  @ManyToOne(() => ActionType, (actionType) => actionType.actions)
+  ActionType!: ActionType;
 
-    @ManyToOne(() => Garden, garden => garden.actions)
-    garden!: Garden
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  created_at: Date;
 
-    @ManyToOne(() => ActionType, actionType => actionType.actions)
-    ActionType!: ActionType
-
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
+  updated_at: Date;
 }
