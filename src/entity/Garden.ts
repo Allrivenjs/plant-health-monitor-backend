@@ -4,11 +4,14 @@ import {
   Column,
   OneToMany,
   ManyToOne,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './User';
 import { Action } from './Action';
 import { GardenInformation } from './GardenInformation';
 import { Notifications } from './Notifications';
+import { Schedule } from './Schedule';
 
 export enum Levels {
   LOW,
@@ -49,6 +52,10 @@ export class Garden {
     default: Levels.LOW,
   })
   sun_levels: Levels;
+
+  @OneToOne(() => Schedule)
+  @JoinColumn()
+  schedule: Schedule;
 
   @ManyToOne(() => User, (user) => user.garden)
   user: User;

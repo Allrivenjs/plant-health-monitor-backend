@@ -21,4 +21,12 @@ export class GardenServices {
     return this.gardenEntity.save(garden);
   }
 
+  async editAGarden(id: number, garden: Garden) {
+    await this.gardenEntity.update(id, garden);
+    return this.findById(id);
+  }
+
+  async deleteAGarden(id: number) {
+    await this.gardenEntity.delete(id);
+  }
 }
