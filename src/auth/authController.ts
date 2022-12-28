@@ -58,8 +58,6 @@ authController.post(
       newUser.name = name;
       newUser.email = email;
       newUser.password = password;
-      newUser.created_at = new Date();
-      newUser.updated_at = new Date();
 
       await userService.createUser(newUser);
 

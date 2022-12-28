@@ -10,7 +10,7 @@ import { Action } from './Action';
 import { GardenInformation } from './GardenInformation';
 import { Notifications } from './Notifications';
 
-export enum WaterLevels {
+export enum Levels {
   LOW,
   MEDIUM,
   HIGH
@@ -38,10 +38,17 @@ export class Garden {
 
   @Column({
     type: 'enum',
-    enum: WaterLevels,
-    default: WaterLevels.LOW,
+    enum: Levels,
+    default: Levels.LOW,
   })
-  water_levels: WaterLevels;
+  water_levels: Levels;
+
+  @Column({
+    type: 'enum',
+    enum: Levels,
+    default: Levels.LOW,
+  })
+  sun_levels: Levels;
 
   @ManyToOne(() => User, (user) => user.garden)
   user: User;

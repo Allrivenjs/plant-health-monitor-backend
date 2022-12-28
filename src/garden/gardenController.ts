@@ -40,7 +40,7 @@ gardenController.post(
     const user = await userService.findById(user_id);
 
     if (!user) {
-      return res.json({
+      return res.status(404).json({
         ok: false,
         message: 'User not found',
       });
@@ -55,12 +55,10 @@ gardenController.post(
     garden.max_temperature = max_temperature;
     garden.min_temperature = min_temperature;
     garden.user = user;
-    garden.created_at = new Date();
-    garden.updated_at = new Date();
 
     const newGarden = await gardenService.createGarden(garden);
 
-    res.json({ 
+    res.status(201).json({ 
       ok: true,
       garden: newGarden,
     });
