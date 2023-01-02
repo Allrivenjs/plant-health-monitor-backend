@@ -11,6 +11,10 @@ const min_temperature = Joi.number();
 
 const max_temperature = Joi.number();
 
+const water_levels = Joi.number();
+
+const sun_levels = Joi.number();
+
 const id = Joi.number();
 
 
@@ -20,10 +24,12 @@ const createAGardenScheme = Joi.object({
   plant_type: plant_type.required(),
   min_temperature: min_temperature.required(),
   max_temperature: max_temperature.required(),
+  water_levels: water_levels.required(),
+  sun_levels: sun_levels.required(),
   user_id: id.required(),
 });
 
-const editAGardenIdScheme = Joi.object({
+const gardenIdSchema = Joi.object({
   id: id.required(),
 });
 
@@ -33,11 +39,13 @@ const editAGardenScheme = Joi.object({
   plant_type: plant_type,
   min_temperature: min_temperature,
   max_temperature: max_temperature,
+  water_levels: water_levels,
+  sun_levels: sun_levels,
   user_id: id.required(),
 });
 
 export {
   createAGardenScheme,
   editAGardenScheme,
-  editAGardenIdScheme,
+  gardenIdSchema as editAGardenIdScheme,
 };

@@ -6,8 +6,11 @@ import { Garden } from '../entity';
 import { validatorHandler } from '../middlewares';
 import { createAGardenScheme, editAGardenIdScheme, editAGardenScheme } from './gardenSchema';
 import { UserServices } from '../user/userService';
+import { Schedule } from '../entity/Schedule';
+import { ScheduleServices } from '../schedule';
 
 const gardenService = new GardenServices();
+const scheduleService = new ScheduleServices();
 const userService = new UserServices();
 
 export const gardenController = Router();
@@ -35,6 +38,8 @@ gardenController.post(
       max_temperature,
       min_temperature,
       user_id,
+      water_levels,
+      sun_levels,
     } = req.body;
 
     const user = await userService.findById(user_id);
@@ -54,7 +59,14 @@ gardenController.post(
     garden.plant_type = plant_type;
     garden.max_temperature = max_temperature;
     garden.min_temperature = min_temperature;
+    garden.water_levels = water_levels;
+    garden.sun_levels = sun_levels;
     garden.user = user;
+
+    const gardenSchedule = new Schedule();
+    scheduleService.createSchedule(gardenSchedule);
+
+    garden.schedule = gardenSchedule;
 
     const newGarden = await gardenService.createGarden(garden);
 
@@ -107,6 +119,8 @@ gardenController.put(
       max_temperature,
       min_temperature,
       user_id,
+      water_levels,
+      sun_levels,
     } = req.body;
 
     const user = await userService.findById(user_id);
@@ -132,6 +146,9 @@ gardenController.put(
     garden.plant_type = plant_type;
     garden.max_temperature = max_temperature;
     garden.min_temperature = min_temperature;
+    garden.water_levels = water_levels;
+    garden.sun_levels = sun_levels;
+    garden.user = user;
 
     const editedGarden = await gardenService.editAGarden(Number(id), garden);
 

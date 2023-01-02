@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Garden } from './Garden';
 
 @Entity()
 export class Schedule {
@@ -8,7 +9,7 @@ export class Schedule {
   @Column({ default: false })
   monday: boolean;
 
-  @Column({ default: false })
+  @Column({ default: true })
   tuesday: boolean;
   
   @Column({ default: false })
@@ -25,6 +26,9 @@ export class Schedule {
 
   @Column({ default: false })
   sunday: boolean;
+
+  @OneToOne(() => Garden, (garden) => garden.schedule)
+  garden: Garden;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

@@ -53,7 +53,7 @@ export class Garden {
   })
   sun_levels: Levels;
 
-  @OneToOne(() => Schedule)
+  @OneToOne(() => Schedule, (schedule) => schedule.garden)
   @JoinColumn()
   schedule: Schedule;
 

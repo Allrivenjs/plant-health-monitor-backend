@@ -13,6 +13,10 @@ export class GardenServices {
     return this.gardenEntity.findOneBy({ id });
   }
 
+  async findScheduleByGardenId(gardenId: number) {
+    return this.gardenEntity.findOne({ where: {id: gardenId}, relations: ['schedule'] });
+  }
+
   async findAll() {
     return this.gardenEntity.find();
   }
