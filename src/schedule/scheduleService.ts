@@ -10,11 +10,12 @@ export class ScheduleServices {
   }
 
   async findById(id: number) {
-    return this.scheduleEntity.findOneBy({ id });
+    return this.scheduleEntity.findOne({ where: { id, }, relations: ['daysOfSchedule'] });
   }
 
   async findAll() {
-    return this.scheduleEntity.find({relations:['day_of_schedule']});
+    // const relations = this.scheduleEntity.metadata.relations.map(m => m.propertyName);
+    return this.scheduleEntity.find({relations: ['daysOfSchedule']});
   }
 
   async createSchedule(schedule: Schedule) {

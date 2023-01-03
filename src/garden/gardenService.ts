@@ -14,7 +14,7 @@ export class GardenServices {
   }
 
   async findScheduleByGardenId(gardenId: number) {
-    return this.gardenEntity.findOne({ where: {id: gardenId}, relations: ['schedule'] });
+    return this.gardenEntity.findOne({ where: {id: gardenId}, relations: ['schedule', 'schedule.daysOfSchedule'] });
   }
 
   async findAll() {

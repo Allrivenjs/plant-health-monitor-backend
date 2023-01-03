@@ -12,7 +12,6 @@ import {
 } from './scheduleSchema';
 
 import { ScheduleServices } from './scheduleService';
-import { UserServices } from '../user/userService';
 import { GardenServices } from '../garden';
 
 import { Schedule } from '../entity';
@@ -56,20 +55,22 @@ scheduleController.post(
 
     const newSchedule = new Schedule();
 
-    weekdays.map(({ dayNumber, name, abbreviation, keyName }) => {
-      const newDayOfSchedule = new DayOfSchedule();
+    Promise.all(
+      weekdays.map( async ({ dayNumber, name, abbreviation, keyName }) => {
+        const newDayOfSchedule = new DayOfSchedule();
 
-      newDayOfSchedule.dayNumber = dayNumber;
-      newDayOfSchedule.name = name;
-      newDayOfSchedule.abbreviation = abbreviation;
-      newDayOfSchedule.keyName = keyName;
-      newDayOfSchedule.cuantity = req.body[keyName].cuantity;
-      newDayOfSchedule.active = req.body[keyName].active;
+        newDayOfSchedule.dayNumber = dayNumber;
+        newDayOfSchedule.name = name;
+        newDayOfSchedule.abbreviation = abbreviation;
+        newDayOfSchedule.keyName = keyName;
+        newDayOfSchedule.cuantity = req.body[keyName].cuantity;
+        newDayOfSchedule.active = req.body[keyName].active;
 
-      newDayOfSchedule.schedule = newSchedule;
+        newDayOfSchedule.schedule = newSchedule;
 
-      dayOfScheduleService.createDayOfSchedule(newDayOfSchedule);
-    });
+        await dayOfScheduleService.createDayOfSchedule(newDayOfSchedule);
+      })
+    );
 
     scheduleService.createSchedule(newSchedule);
 
@@ -78,6 +79,49 @@ scheduleController.post(
     res.status(201).json({
       ok: false,
       schedule: newSchedule,
+    });
+  }
+);
+
+// edit a schedule
+scheduleController.put(
+  '/:id',
+  validatorHandler(scheduleId, 'params'),
+  validatorHandler(editAScheduleScheme, 'body'),
+  passport.authenticate('jwt', { session: false }),
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    const schedule = await scheduleService.findById(Number(id));
+
+    if (!schedule) {
+      return res.status(404).json({
+        ok: false,
+        message: 'Schedule not found',
+      });
+    }
+
+    Promise.all(
+      weekdays.map(
+        async ({ dayNumber, name, abbreviation, keyName }, index) => {
+          schedule.daysOfSchedule[index].dayNumber = dayNumber;
+          schedule.daysOfSchedule[index].name = name;
+          schedule.daysOfSchedule[index].abbreviation = abbreviation;
+          schedule.daysOfSchedule[index].keyName = keyName;
+          schedule.daysOfSchedule[index].cuantity = req.body[keyName].cuantity;
+          schedule.daysOfSchedule[index].active = req.body[keyName].active;
+
+          await dayOfScheduleService.editADayOfSchedule(
+            schedule.daysOfSchedule[index].id,
+            schedule.daysOfSchedule[index]
+          );
+        }
+      )
+    );
+
+    res.status(201).json({
+      ok: true,
+      schedule,
     });
   }
 );
@@ -123,52 +167,9 @@ scheduleController.get(
       });
     }
 
-    console.log(garden);
-
     res.status(201).json({
       ok: true,
       schedule: garden.schedule,
-    });
-  }
-);
-
-// edit a schedule
-scheduleController.put(
-  '/:id',
-  validatorHandler(scheduleId, 'params'),
-  validatorHandler(editAScheduleScheme, 'body'),
-  passport.authenticate('jwt', { session: false }),
-  async (req: Request, res: Response) => {
-    const { id } = req.params;
-
-    const schedule = await scheduleService.findById(Number(id));
-
-    if (!schedule) {
-      return res.status(404).json({
-        ok: false,
-        message: 'Schedule not found',
-      });
-    }
-
-    weekdays.map(({ dayNumber, name, abbreviation, keyName }, index) => {
-      schedule.daysOfSchedule[index].dayNumber = dayNumber;
-      schedule.daysOfSchedule[index].name = name;
-      schedule.daysOfSchedule[index].abbreviation = abbreviation;
-      schedule.daysOfSchedule[index].keyName = keyName;
-      schedule.daysOfSchedule[index].cuantity = req.body[keyName].cuantity;
-      schedule.daysOfSchedule[index].active = req.body[keyName].active;
-
-      dayOfScheduleService.editADayOfSchedule(
-        schedule.daysOfSchedule[index].id,
-        schedule.daysOfSchedule[index]
-      );
-    });
-
-    scheduleService.editASchedule(Number(id), schedule);
-
-    res.status(201).json({
-      ok: true,
-      schedule,
     });
   }
 );
