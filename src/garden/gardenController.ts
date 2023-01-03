@@ -8,9 +8,13 @@ import { createAGardenScheme, editAGardenIdScheme, editAGardenScheme } from './g
 import { UserServices } from '../user/userService';
 import { Schedule } from '../entity/Schedule';
 import { ScheduleServices } from '../schedule';
+import { weekdays } from '../constants';
+import { DayOfScheduleServices } from '../dayOfSchedule';
+import { DayOfSchedule } from '../entity/DayOfSchedule';
 
 const gardenService = new GardenServices();
 const scheduleService = new ScheduleServices();
+const dayOfScheduleService = new DayOfScheduleServices();
 const userService = new UserServices();
 
 export const gardenController = Router();
@@ -65,6 +69,22 @@ gardenController.post(
 
     const gardenSchedule = new Schedule();
     scheduleService.createSchedule(gardenSchedule);
+
+    weekdays.map(({ dayNumber, name, abbreviation, keyName }) => {
+      const newDayOfSchedule = new DayOfSchedule();
+
+      newDayOfSchedule.dayNumber = dayNumber;
+      newDayOfSchedule.name = name;
+      newDayOfSchedule.abbreviation = abbreviation;
+      newDayOfSchedule.keyName = keyName;
+      newDayOfSchedule.cuantity = 0;
+      newDayOfSchedule.active = false;
+
+      newDayOfSchedule.schedule = gardenSchedule;
+
+      dayOfScheduleService.createDayOfSchedule(newDayOfSchedule);
+    });
+
 
     garden.schedule = gardenSchedule;
 

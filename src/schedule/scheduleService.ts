@@ -14,7 +14,7 @@ export class ScheduleServices {
   }
 
   async findAll() {
-    return this.scheduleEntity.find();
+    return this.scheduleEntity.find({relations:['day_of_schedule']});
   }
 
   async createSchedule(schedule: Schedule) {

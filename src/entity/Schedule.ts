@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany } from 'typeorm';
+import { DayOfSchedule } from './DayOfSchedule';
 import { Garden } from './Garden';
 
 @Entity()
@@ -6,26 +7,8 @@ export class Schedule {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: false })
-  monday: boolean;
-
-  @Column({ default: true })
-  tuesday: boolean;
-  
-  @Column({ default: false })
-  wednesday: boolean;
-
-  @Column({ default: false })
-  thursday: boolean;
-
-  @Column({ default: false })
-  friday: boolean;
-
-  @Column({ default: false })
-  saturday: boolean;
-
-  @Column({ default: false })
-  sunday: boolean;
+  @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.schedule)
+  daysOfSchedule: DayOfSchedule[];
 
   @OneToOne(() => Garden, (garden) => garden.schedule)
   garden: Garden;
