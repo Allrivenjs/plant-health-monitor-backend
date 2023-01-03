@@ -55,24 +55,22 @@ scheduleController.post(
 
     const newSchedule = new Schedule();
 
-    Promise.all(
-      weekdays.map( async ({ dayNumber, name, abbreviation, keyName }) => {
-        const newDayOfSchedule = new DayOfSchedule();
-
-        newDayOfSchedule.dayNumber = dayNumber;
-        newDayOfSchedule.name = name;
-        newDayOfSchedule.abbreviation = abbreviation;
-        newDayOfSchedule.keyName = keyName;
-        newDayOfSchedule.cuantity = req.body[keyName].cuantity;
-        newDayOfSchedule.active = req.body[keyName].active;
-
-        newDayOfSchedule.schedule = newSchedule;
-
-        await dayOfScheduleService.createDayOfSchedule(newDayOfSchedule);
-      })
+    await Promise.all(
+        weekdays.map(async ({dayNumber, name, abbreviation, keyName}) => {
+            await dayOfScheduleService.createDayOfSchedule(DayOfSchedule.assignDayOfSchedule(
+                new DayOfSchedule(),
+                dayNumber,
+                name,
+                abbreviation,
+                keyName,
+                req.body[keyName].cuantity,
+                req.body[keyName].active,
+                newSchedule
+            ));
+        })
     );
 
-    scheduleService.createSchedule(newSchedule);
+    await scheduleService.createSchedule(newSchedule);
 
     garden.schedule = newSchedule;
 
@@ -101,22 +99,15 @@ scheduleController.put(
       });
     }
 
-    Promise.all(
-      weekdays.map(
-        async ({ dayNumber, name, abbreviation, keyName }, index) => {
-          schedule.daysOfSchedule[index].dayNumber = dayNumber;
-          schedule.daysOfSchedule[index].name = name;
-          schedule.daysOfSchedule[index].abbreviation = abbreviation;
-          schedule.daysOfSchedule[index].keyName = keyName;
-          schedule.daysOfSchedule[index].cuantity = req.body[keyName].cuantity;
-          schedule.daysOfSchedule[index].active = req.body[keyName].active;
-
-          await dayOfScheduleService.editADayOfSchedule(
-            schedule.daysOfSchedule[index].id,
-            schedule.daysOfSchedule[index]
-          );
-        }
-      )
+    await Promise.all(
+        weekdays.map(
+            async ({dayNumber, name, abbreviation, keyName}, index) => {
+                await dayOfScheduleService.editADayOfSchedule(
+                    schedule.daysOfSchedule[index].id,
+                    DayOfSchedule.assignDayOfSchedule(schedule.daysOfSchedule[index], dayNumber, name, abbreviation, keyName, req.body[keyName].cuantity, req.body[keyName].active, schedule)
+                );
+            }
+        )
     );
 
     res.status(201).json({

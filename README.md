@@ -11,3 +11,4 @@ To run the app locally, the datebase has to be setup
 
 >Init server project: \
 `yarn start`
+ 

@@ -67,4 +67,17 @@ export class DayOfSchedule {
 
     return this.assignDataToDayOfSchedule(new DayOfSchedule(), dayNumber, keyName, name, abbreviation, active, cuantity, schedule);
   }
+
+  static assignDayOfSchedule(
+    dayOfSchedule: DayOfSchedule,
+    dayNumber: number,
+    name: string,
+    abbreviation: string,
+    keyName: string,
+    cuantity: number,
+    active: boolean,
+    schedule: Schedule
+  ) {
+    return this.assignDataToDayOfSchedule(dayOfSchedule, dayNumber, keyName, name, abbreviation, active, cuantity, schedule);;
+  }
 }
