@@ -55,20 +55,8 @@ gardenController.post(
       });
     }
 
-
-    const garden = new Garden();
-
-    garden.name = name;
-    garden.image = image;
-    garden.plant_type = plant_type;
-    garden.max_temperature = max_temperature;
-    garden.min_temperature = min_temperature;
-    garden.water_levels = water_levels;
-    garden.sun_levels = sun_levels;
-    garden.user = user;
-
     const gardenSchedule = new Schedule();
-    scheduleService.createSchedule(gardenSchedule);
+    await scheduleService.createSchedule(gardenSchedule);
 
     weekdays.map(({ dayNumber, name, abbreviation, keyName }) => {
       const newDayOfSchedule = new DayOfSchedule();
@@ -86,7 +74,17 @@ gardenController.post(
     });
 
 
-    garden.schedule = gardenSchedule;
+      const garden = Garden.makeGarden(
+        name,
+        image,
+        plant_type,
+        max_temperature,
+        min_temperature,
+        water_levels,
+        sun_levels,
+        user,
+        gardenSchedule
+      );
 
     const newGarden = await gardenService.createGarden(garden);
 
@@ -161,16 +159,18 @@ gardenController.put(
       });
     }
 
-    garden.name = name;
-    garden.image = image;
-    garden.plant_type = plant_type;
-    garden.max_temperature = max_temperature;
-    garden.min_temperature = min_temperature;
-    garden.water_levels = water_levels;
-    garden.sun_levels = sun_levels;
-    garden.user = user;
-
-    const editedGarden = await gardenService.editAGarden(Number(id), garden);
+    const editedGarden = await gardenService.editAGarden(Number(id), Garden.updateGarden(
+        garden,
+        name,
+        image,
+        plant_type,
+        max_temperature,
+        min_temperature,
+        water_levels,
+        sun_levels,
+        user,
+        garden.schedule
+    ));
 
     res.status(201).json({ 
       ok: true,

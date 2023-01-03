@@ -1,17 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  ManyToOne,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
-import { User } from './User';
-import { Action } from './Action';
-import { GardenInformation } from './GardenInformation';
-import { Notifications } from './Notifications';
-import { Schedule } from './Schedule';
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn,} from 'typeorm';
+import {User} from './User';
+import {Action} from './Action';
+import {GardenInformation} from './GardenInformation';
+import {Notifications} from './Notifications';
+import {Schedule} from './Schedule';
 
 export enum Levels {
   LOW,
@@ -77,4 +69,26 @@ export class Garden {
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  static assignDataToGarden(garden: Garden, name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
+    garden.name = name;
+    garden.image = image;
+    garden.plant_type = plant_type;
+    garden.min_temperature = min_temperature;
+    garden.max_temperature = max_temperature;
+    garden.water_levels = water_levels;
+    garden.sun_levels = sun_levels;
+    garden.user = user;
+    garden.schedule = schedule;
+    return garden;
+  }
+
+  static makeGarden(name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
+    return this.assignDataToGarden(new Garden(), name, image, plant_type, min_temperature, max_temperature, water_levels, sun_levels, user, schedule);
+  }
+
+  static updateGarden(garden: Garden, name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
+    return this.assignDataToGarden(garden, name, image, plant_type, min_temperature, max_temperature, water_levels, sun_levels, user, schedule);
+  }
+
 }
