@@ -6,7 +6,7 @@ import { Garden } from '../entity';
 import { validatorHandler } from '../middlewares';
 import { createAGardenScheme, editAGardenIdScheme, editAGardenScheme } from './gardenSchema';
 import { UserServices } from '../user/userService';
-import { Schedule } from '../entity/Schedule';
+import { Schedule } from '../entity';
 import { ScheduleServices } from '../schedule';
 import { weekdays } from '../constants';
 import { DayOfScheduleServices } from '../dayOfSchedule';
@@ -58,19 +58,16 @@ gardenController.post(
     const gardenSchedule = new Schedule();
     await scheduleService.createSchedule(gardenSchedule);
 
-    weekdays.map(({ dayNumber, name, abbreviation, keyName }) => {
-      const newDayOfSchedule = new DayOfSchedule();
-
-      newDayOfSchedule.dayNumber = dayNumber;
-      newDayOfSchedule.name = name;
-      newDayOfSchedule.abbreviation = abbreviation;
-      newDayOfSchedule.keyName = keyName;
-      newDayOfSchedule.cuantity = 0;
-      newDayOfSchedule.active = false;
-
-      newDayOfSchedule.schedule = gardenSchedule;
-
-      dayOfScheduleService.createDayOfSchedule(newDayOfSchedule);
+    weekdays.forEach(({ dayNumber, name, abbreviation, keyName }) => {
+      dayOfScheduleService.createDayOfSchedule(DayOfSchedule.makeDayOfSchedule(
+          dayNumber,
+            name,
+            abbreviation,
+            keyName,
+            false,
+            0,
+            gardenSchedule
+      ));
     });
 
 

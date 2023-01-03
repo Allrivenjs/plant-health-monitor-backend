@@ -34,4 +34,37 @@ export class DayOfSchedule {
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
+
+  static assignDataToDayOfSchedule(
+    dayOfSchedule: DayOfSchedule,
+    dayNumber: number,
+    keyName: string,
+    name: string,
+    abbreviation: string,
+    active: boolean,
+    cuantity: number,
+    schedule: Schedule
+    ) {
+    dayOfSchedule.dayNumber = dayNumber;
+    dayOfSchedule.keyName = keyName;
+    dayOfSchedule.name = name;
+    dayOfSchedule.abbreviation = abbreviation;
+    dayOfSchedule.active = active;
+    dayOfSchedule.cuantity = cuantity;
+    dayOfSchedule.schedule = schedule;
+    return dayOfSchedule;
+  }
+
+  static makeDayOfSchedule(
+    dayNumber: number,
+    keyName: string,
+    name: string,
+    abbreviation: string,
+    active: boolean,
+    cuantity: number,
+    schedule: Schedule
+  ) {
+
+    return this.assignDataToDayOfSchedule(new DayOfSchedule(), dayNumber, keyName, name, abbreviation, active, cuantity, schedule);
+  }
 }
