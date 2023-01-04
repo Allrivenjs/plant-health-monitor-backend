@@ -53,7 +53,7 @@ export class Garden {
   user: User;
 
   @OneToMany(() => Action, (action) => action.garden)
-  actions!: Action[];
+  actions: Action[];
 
   @OneToMany(
     () => GardenInformation,

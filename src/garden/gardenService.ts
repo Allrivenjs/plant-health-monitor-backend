@@ -18,7 +18,7 @@ export class GardenServices {
   }
 
   async findAll() {
-    return this.gardenEntity.find();
+    return this.gardenEntity.find({relations: ['actions']});
   }
 
   async createGarden(garden: Garden) {

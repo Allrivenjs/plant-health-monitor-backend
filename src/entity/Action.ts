@@ -8,13 +8,13 @@ export class Action {
   id!: number;
 
   @Column()
-  payload!: string;
+  payload: string;
 
   @ManyToOne(() => Garden, (garden) => garden.actions)
-  garden!: Garden;
+  garden: Garden;
 
   @ManyToOne(() => ActionType, (actionType) => actionType.actions)
-  ActionType!: ActionType;
+  actionType: ActionType;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;

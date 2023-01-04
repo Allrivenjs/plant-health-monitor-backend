@@ -1,16 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Action } from './Action';
+
+export enum ActionTypes {
+  WATERING,
+  LOW_WATER,
+  HIGH_TEMPERTURE,
+  LOW_TEMPERTURE,
+  HIGH_SUN,
+  LOW_SUN,
+  HIGH_HUMIDITY,
+  LOW_HUMIDITY,
+};
 
 @Entity()
 export class ActionType {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  image: string;
+  @Column({
+    type: 'enum',
+    enum: ActionTypes,
+  })
+  type: ActionTypes;
 
-  @ManyToOne(() => Action, (action) => action.ActionType)
-  actions!: Action[];
+  @Column({})
+  description: string;
+
+  @OneToMany(() => Action, (action) => action.actionType)
+  actions: Action[];
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
