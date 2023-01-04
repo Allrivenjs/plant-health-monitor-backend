@@ -4,6 +4,7 @@ import { authController } from '../auth';
 import { gardenController } from '../garden';
 import { scheduleController } from '../schedule';
 import { userController } from '../user';
+import { actionController } from '../action';
 
 export const setAppApiController = (app: Express) => {
   const appRouter = Router();
@@ -13,4 +14,5 @@ export const setAppApiController = (app: Express) => {
   appRouter.use('/auth', authController);
   appRouter.use('/garden', gardenController);
   appRouter.use('/schedule', scheduleController);
+  appRouter.use('/action', actionController);
 };
