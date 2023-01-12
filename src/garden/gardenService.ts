@@ -10,15 +10,23 @@ export class GardenServices {
   }
 
   async findById(id: number) {
-    return this.gardenEntity.findOneBy({ id });
+    return this.gardenEntity.findOne({
+      where: { id },
+      relations: ['actions', 'schedule', 'schedule.daysOfSchedule'],
+    });
   }
 
   async findScheduleByGardenId(gardenId: number) {
-    return this.gardenEntity.findOne({ where: {id: gardenId}, relations: ['schedule', 'schedule.daysOfSchedule'] });
+    return this.gardenEntity.findOne({
+      where: { id: gardenId },
+      relations: ['schedule', 'schedule.daysOfSchedule'],
+    });
   }
 
   async findAll() {
-    return this.gardenEntity.find({relations: ['actions']});
+    return this.gardenEntity.find({
+      relations: ['actions', 'schedule', 'schedule.daysOfSchedule'],
+    });
   }
 
   async createGarden(garden: Garden) {

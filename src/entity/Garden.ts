@@ -1,15 +1,23 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn,} from 'typeorm';
-import {User} from './User';
-import {Action} from './Action';
-import {GardenInformation} from './GardenInformation';
-import {Notifications} from './Notifications';
-import {Schedule} from './Schedule';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './User';
+import { Action } from './Action';
+import { GardenInformation } from './GardenInformation';
+import { Notifications } from './Notifications';
+import { Schedule } from './Schedule';
 
 export enum Levels {
   LOW,
   MEDIUM,
-  HIGH
-};
+  HIGH,
+}
 
 @Entity()
 export class Garden {
@@ -70,7 +78,18 @@ export class Garden {
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   updated_at: Date;
 
-  static assignDataToGarden(garden: Garden, name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
+  static assignDataToGarden(
+    garden: Garden,
+    name: string,
+    image: string,
+    plant_type: string,
+    min_temperature: number,
+    max_temperature: number,
+    water_levels: Levels,
+    sun_levels: Levels,
+    user: User,
+    schedule: Schedule
+  ) {
     garden.name = name;
     garden.image = image;
     garden.plant_type = plant_type;
@@ -83,12 +102,54 @@ export class Garden {
     return garden;
   }
 
-  static makeGarden(name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
-    return this.assignDataToGarden(new Garden(), name, image, plant_type, min_temperature, max_temperature, water_levels, sun_levels, user, schedule);
+  static makeGarden(
+    name: string,
+    image: string,
+    plant_type: string,
+    min_temperature: number,
+    max_temperature: number,
+    water_levels: Levels,
+    sun_levels: Levels,
+    user: User,
+    schedule: Schedule
+  ) {
+    return this.assignDataToGarden(
+      new Garden(),
+      name,
+      image,
+      plant_type,
+      min_temperature,
+      max_temperature,
+      water_levels,
+      sun_levels,
+      user,
+      schedule
+    );
   }
 
-  static updateGarden(garden: Garden, name: string, image: string, plant_type: string, min_temperature: number, max_temperature: number, water_levels: Levels, sun_levels: Levels, user: User, schedule: Schedule) {
-    return this.assignDataToGarden(garden, name, image, plant_type, min_temperature, max_temperature, water_levels, sun_levels, user, schedule);
+  static updateGarden(
+    garden: Garden,
+    name: string,
+    image: string,
+    plant_type: string,
+    min_temperature: number,
+    max_temperature: number,
+    water_levels: Levels,
+    sun_levels: Levels,
+    user: User,
+    schedule: Schedule
+  ) {
+    return this.assignDataToGarden(
+      garden,
+      name,
+      image,
+      plant_type,
+      min_temperature,
+      max_temperature,
+      water_levels,
+      sun_levels,
+      user,
+      schedule
+    );
   }
-
 }

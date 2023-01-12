@@ -104,15 +104,17 @@ scheduleController.put(
             async ({dayNumber, name, abbreviation, keyName}, index) => {
                 await dayOfScheduleService.editADayOfSchedule(
                     schedule.daysOfSchedule[index].id,
-                    DayOfSchedule.assignDayOfSchedule(schedule.daysOfSchedule[index], dayNumber, name, abbreviation, keyName, req.body[keyName].cuantity, req.body[keyName].active, schedule)
+                    DayOfSchedule.assignDayOfSchedule(
+                      schedule.daysOfSchedule[index], 
+                     dayNumber, name, abbreviation, keyName, req.body[keyName].cuantity, req.body[keyName].active, schedule
+                    )
                 );
             }
         )
     );
-
+    
     res.status(201).json({
       ok: true,
-      schedule,
     });
   }
 );
@@ -148,6 +150,7 @@ scheduleController.get(
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
     const { id } = req.params;
+
 
     const garden = await gardenService.findScheduleByGardenId(Number(id));
 

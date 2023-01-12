@@ -138,6 +138,7 @@ gardenController.put(
       sun_levels,
     } = req.body;
 
+
     const user = await userService.findById(user_id);
 
     if (!user) {
@@ -147,6 +148,7 @@ gardenController.put(
       });
     }
 
+
     const garden = await gardenService.findById(Number(id));
 
     if (!garden) {
@@ -155,6 +157,8 @@ gardenController.put(
         message: 'Garden not found',
       });
     }
+
+    delete garden.actions;
 
     const editedGarden = await gardenService.editAGarden(Number(id), Garden.updateGarden(
         garden,

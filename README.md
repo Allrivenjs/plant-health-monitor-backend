@@ -7,7 +7,7 @@ To run the app locally, the datebase has to be setup
 `yarn typeorm migration:generate -d ./src/data-source.ts -n GardenRefactoring`
 
 >Exec migrations: \
-`yarn typeorm -- migration:run -d ./src/data-source.ts`
+`yarn typeorm migration:run -d ./src/data-source.ts`
 
 >Init server project: \
 `yarn start`

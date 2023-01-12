@@ -5,7 +5,7 @@ const id = Joi.number();
 
 const dayNumber = Joi.number();
 const active = Joi.boolean();
-const cuantity = Joi.number();
+const cuantity = Joi.number().max(1000);
 
 const foo = Joi.object
 
