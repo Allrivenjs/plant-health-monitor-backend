@@ -25,7 +25,7 @@ export class DayOfSchedule {
   @Column({ default: 0 })
   cuantity: number;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule)
+  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule, {onDelete: 'CASCADE'})
   schedule: Schedule;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })

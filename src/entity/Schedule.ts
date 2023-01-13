@@ -7,10 +7,10 @@ export class Schedule {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.schedule)
+  @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.schedule, {onDelete: 'CASCADE'})
   daysOfSchedule: DayOfSchedule[];
 
-  @OneToOne(() => Garden, (garden) => garden.schedule)
+  @OneToOne(() => Garden, (garden) => garden.schedule, {onDelete: 'CASCADE'})
   garden: Garden;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })

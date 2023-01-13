@@ -26,7 +26,7 @@ export class ActionType {
   @Column({})
   description: string;
 
-  @OneToMany(() => Action, (action) => action.actionType)
+  @OneToMany(() => Action, (action) => action.actionType, {onDelete: 'CASCADE'})
   actions: Action[];
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })

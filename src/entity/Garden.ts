@@ -53,23 +53,29 @@ export class Garden {
   })
   sun_levels: Levels;
 
-  @OneToOne(() => Schedule, (schedule) => schedule.garden)
+  @OneToOne(() => Schedule, (schedule) => schedule.garden, {
+    onDelete: 'CASCADE',
+    cascade: true
+  })
   @JoinColumn()
   schedule: Schedule;
 
   @ManyToOne(() => User, (user) => user.garden)
   user: User;
 
-  @OneToMany(() => Action, (action) => action.garden)
+  @OneToMany(() => Action, (action) => action.garden, { onDelete: 'CASCADE',  })
   actions: Action[];
 
   @OneToMany(
     () => GardenInformation,
-    (gardenInformation) => gardenInformation.garden
+    (gardenInformation) => gardenInformation.garden,
+    { onDelete: 'CASCADE' }
   )
   gardenInformation!: GardenInformation[];
 
-  @OneToMany(() => Notifications, (notifications) => notifications.garden)
+  @OneToMany(() => Notifications, (notifications) => notifications.garden, {
+    onDelete: 'CASCADE',
+  })
   notifications!: Notifications[];
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })

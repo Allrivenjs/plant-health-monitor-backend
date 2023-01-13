@@ -85,6 +85,7 @@ gardenController.post(
 
     const newGarden = await gardenService.createGarden(garden);
 
+
     res.status(201).json({ 
       ok: true,
       garden: newGarden,
@@ -165,8 +166,8 @@ gardenController.put(
         name,
         image,
         plant_type,
-        max_temperature,
         min_temperature,
+        max_temperature,
         water_levels,
         sun_levels,
         user,
@@ -200,6 +201,7 @@ gardenController.delete(
     }
 
     await gardenService.deleteAGarden(Number(id));
+    await scheduleService.deleteASchedule(garden.schedule.id);
 
     res.status(201).json({ 
       ok: true,

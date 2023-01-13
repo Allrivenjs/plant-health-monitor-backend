@@ -15,6 +15,7 @@ import {
   errorHandler,
   logErrors,
 } from './middlewares/errorHandler';
+import { startGardenWateringSchedule } from './sockets';
 
 const app = express();
 
@@ -24,10 +25,12 @@ app.use(cors());
 
 const server = http.createServer(app);
 
-const io = new Server(server);
+export const io = new Server(server);
 
 AppDataSource.initialize()
-  .then(async () => {})
+  .then(async () => {
+    startGardenWateringSchedule();
+  })
   .catch((error) => console.log(error));
 
 // passport strategies
@@ -44,18 +47,12 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('test', (msg) => {
-    console.log('message: ' + msg);
-  });
-
-  socket.on('message', (msg) => {
-    console.log('message: ' + JSON.stringify(msg));
-  });
-
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
+
+
 
 server.listen(config.appPort, () => {
   console.log('listening on *:', config.appPort);
