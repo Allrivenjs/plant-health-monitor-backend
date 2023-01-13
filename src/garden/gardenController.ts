@@ -85,6 +85,7 @@ gardenController.post(
 
     const newGarden = await gardenService.createGarden(garden);
 
+
     res.status(201).json({ 
       ok: true,
       garden: newGarden,
@@ -138,6 +139,7 @@ gardenController.put(
       sun_levels,
     } = req.body;
 
+
     const user = await userService.findById(user_id);
 
     if (!user) {
@@ -146,6 +148,7 @@ gardenController.put(
         message: 'User not found',
       });
     }
+
 
     const garden = await gardenService.findById(Number(id));
 
@@ -156,13 +159,15 @@ gardenController.put(
       });
     }
 
+    delete garden.actions;
+
     const editedGarden = await gardenService.editAGarden(Number(id), Garden.updateGarden(
         garden,
         name,
         image,
         plant_type,
-        max_temperature,
         min_temperature,
+        max_temperature,
         water_levels,
         sun_levels,
         user,
@@ -196,6 +201,7 @@ gardenController.delete(
     }
 
     await gardenService.deleteAGarden(Number(id));
+    await scheduleService.deleteASchedule(garden.schedule.id);
 
     res.status(201).json({ 
       ok: true,

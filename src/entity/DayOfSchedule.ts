@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 
-import { Garden } from './Garden';
 import { Schedule } from './Schedule';
 
 @Entity()
@@ -19,14 +18,14 @@ export class DayOfSchedule {
 
   @Column()
   abbreviation: string;
-  
+
   @Column({ default: false })
   active: boolean;
 
   @Column({ default: 0 })
   cuantity: number;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule)
+  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule, {onDelete: 'CASCADE'})
   schedule: Schedule;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
@@ -44,7 +43,7 @@ export class DayOfSchedule {
     active: boolean,
     cuantity: number,
     schedule: Schedule
-    ) {
+  ) {
     dayOfSchedule.dayNumber = dayNumber;
     dayOfSchedule.keyName = keyName;
     dayOfSchedule.name = name;
@@ -64,8 +63,16 @@ export class DayOfSchedule {
     cuantity: number,
     schedule: Schedule
   ) {
-
-    return this.assignDataToDayOfSchedule(new DayOfSchedule(), dayNumber, keyName, name, abbreviation, active, cuantity, schedule);
+    return this.assignDataToDayOfSchedule(
+      new DayOfSchedule(),
+      dayNumber,
+      keyName,
+      name,
+      abbreviation,
+      active,
+      cuantity,
+      schedule
+    );
   }
 
   static assignDayOfSchedule(
@@ -78,6 +85,15 @@ export class DayOfSchedule {
     active: boolean,
     schedule: Schedule
   ) {
-    return this.assignDataToDayOfSchedule(dayOfSchedule, dayNumber, keyName, name, abbreviation, active, cuantity, schedule);;
+    return this.assignDataToDayOfSchedule(
+      dayOfSchedule,
+      dayNumber,
+      keyName,
+      name,
+      abbreviation,
+      active,
+      cuantity,
+      schedule
+    );
   }
 }
