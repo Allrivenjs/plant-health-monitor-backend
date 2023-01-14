@@ -2,7 +2,7 @@ import { config } from './config';
 import cors from 'cors';
 
 import http from 'http';
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 import { Server } from 'socket.io';
 
@@ -52,7 +52,11 @@ io.on('connection', (socket) => {
   });
 });
 
-
+app.get('/test', (req: Request, res: Response) => {
+  res.json({
+    test: 'hello',
+  });
+});
 
 server.listen(config.appPort, () => {
   console.log('listening on *:', config.appPort);
