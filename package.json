@@ -21,6 +21,7 @@
   "homepage": "https://github.com/Allrivenjs/-plant-health-monitor-backend#readme",
   "dependencies": {
     "@hapi/boom": "^10.0.0",
+    "@types/node-schedule": "^2.1.0",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -28,6 +29,7 @@
     "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
     "mysql": "npm:mysql2@^2.1.0",
+    "node-schedule": "^2.1.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

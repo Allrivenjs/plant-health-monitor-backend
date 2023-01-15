@@ -11,6 +11,7 @@ import { ScheduleServices } from '../schedule';
 import { weekdays } from '../constants';
 import { DayOfScheduleServices } from '../dayOfSchedule';
 import { DayOfSchedule } from '../entity/DayOfSchedule';
+import { generateWaterSchedulers } from '../scheduler';
 
 const gardenService = new GardenServices();
 const scheduleService = new ScheduleServices();

@@ -23,6 +23,7 @@ export class ScheduleServices {
   }
 
   async editASchedule(id: number, schedule: Schedule) {
+    // delete schedule.garden;
     await this.scheduleEntity.update(id, schedule);
     return this.findById(id);
   }

@@ -16,6 +16,7 @@ import {
   logErrors,
 } from './middlewares/errorHandler';
 import { startGardenWateringSchedule } from './sockets';
+import { generateWaterSchedulers } from './scheduler';
 
 const app = express();
 
@@ -29,7 +30,8 @@ export const io = new Server(server);
 
 AppDataSource.initialize()
   .then(async () => {
-    startGardenWateringSchedule();
+    // startGardenWateringSchedule();
+    generateWaterSchedulers();
   })
   .catch((error) => console.log(error));
 
