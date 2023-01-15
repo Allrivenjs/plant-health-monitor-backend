@@ -10,6 +10,7 @@
 // Pines de cada sensor
 #define LIGHT_SENSOR_PIN 15  // Pin del sensor de luz
 #define DHTPIN 14  // Pin del sensor de temperatura
+#define HUMEDAD_PIN 12  // Pin del sensor de temperatura
 #define HUM_SENSOR_PIN A2  // Pin del sensor de humedad
 
 // Variables para almacenar los valores leídos por cada sensor
@@ -21,8 +22,8 @@ float humValue;
 #define DHTTYPE DHT22
 DynamicJsonDocument jsonDoc(4024);
 
-const char* serverAddress = "192.168.1.66";  //"192.168.1.82"
-const int serverPort = 3002;
+const char* serverAddress = "https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
+const int serverPort = 443;
 WiFiClient clientW;
 HTTPClient http;
 DHT dht(DHTPIN, DHTTYPE);
@@ -40,7 +41,7 @@ void wifiSetup(){
 
 
 void InitHttp(){
-  http.begin(clientW, serverAddress, serverPort);
+  http.begin(clientW, serverAddress, serverPort,"/test", true);
   int httpCode = http.GET();
   if (httpCode > 0) {
     // Si la solicitud fue exitosa, leer la respuesta del servidor
@@ -66,11 +67,11 @@ void InitHttp(){
 
   // // Imprime la lectura en la consola
   // Serial.print("Temperatura: ");
-  // Serial.print(temperature);
+  // Serial.print(tempValue);
   // Serial.println(" grados Celsius");
 
   // Serial.print("Humedad: ");
-  // Serial.print(humidity);
+  // Serial.print(humValue);
   // Serial.println(" %");
 
 }
@@ -85,6 +86,16 @@ void getSensorLuzData(){
   // Serial.print(luz); Serial.print("%");
   // delay(100);
 }
+
+// function to calculate humidity from the raw sensor value
+float calculateHumidity(int sensorValue) {
+  // conversion formula: humidity = (sensorValue / 1023) * 100
+  float humidity = (sensorValue / 1023.0) * 100;
+
+  // return the calculated humidity value
+  return humidity;
+}
+
 
 void getDataToJson() {
   getDhtDataSensor();
