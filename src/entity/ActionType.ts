@@ -20,6 +20,7 @@ export class ActionType {
   @Column({
     type: 'enum',
     enum: ActionTypes,
+    unique: true,
   })
   type: ActionTypes;
 

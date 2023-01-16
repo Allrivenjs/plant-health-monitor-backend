@@ -9,8 +9,9 @@ export class ActionTypeService {
     this.actionTypeEntity = AppDataSource.getRepository(ActionType);
   }
 
-  async findByType(id: ActionTypes) {
-    return this.actionTypeEntity.findOne({ where: { id, } });
+  async findByType(type: ActionTypes) {
+    // @ts-ignore
+    return this.actionTypeEntity.findOne({ where: { type: `${type}`, } });
   }
 
   async findAll() {

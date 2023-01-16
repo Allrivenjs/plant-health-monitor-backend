@@ -1,4 +1,4 @@
-import scheduler, { Job } from 'node-schedule';
+import scheduler from 'node-schedule';
 
 import { io } from '..';
 import { ActionServices } from '../action';
@@ -14,7 +14,7 @@ const scheduleService = new ScheduleServices();
 
 const jobs = [];
 
-// TODO: Make a better way to identify jobs by some kind of id and cancel them manually. 
+// TODO: Make a better way to identify jobs by some kind of id and cancel them manually.
 // Maybe creating a new field in the Schedule entity and storing the id of the job currently
 // holding that schedule, but i'll do it later
 export const cancelAllJobs = () => {
@@ -33,7 +33,10 @@ export const cancelAllJobs = () => {
 
 export const generateWaterSchedulers = async () => {
   const schedules = await scheduleService.findAll();
-  console.log(schedules.filter(({active}) => !active).length + ' non active schedules found...');
+  console.log(
+    schedules.filter(({ active }) => !active).length +
+      ' non active schedules found...'
+  );
 
   for (const schedule of schedules) {
     if (schedule.active) continue;
@@ -44,7 +47,7 @@ export const generateWaterSchedulers = async () => {
       const wateringJob = scheduler.scheduleJob(
         `watering - scheduleId:${schedule.id}`,
         // `* * * * ${dayOfSchedule.dayNumber}`,
-        
+
         // `* * * ? * *`, // every second
         `0 * * ? * *`, // every minute
         async () => {
@@ -52,17 +55,23 @@ export const generateWaterSchedulers = async () => {
             'ejecutando job: regado de schedule ' + schedule.id + ', día ',
             dayOfSchedule.dayNumber + '-' + dayOfSchedule.name
           );
-          // cada dayOfSchedule (día de la semana correspondiente) se creara:
-          // Un action
-          const action = new Action();
-          action.garden;
-          action.payload = 'test';
-          action.garden = schedule.garden;
-          action.actionType = await actionTypeService.findByType(
+          const scheduleWithGarden =
+            await scheduleService.findGardenByScheduleId(schedule.id);
+          const garden = scheduleWithGarden.garden;
+
+          const actionType = await actionTypeService.findByType(
             ActionTypes.WATERING
           );
 
+          // cada dayOfSchedule (día de la semana correspondiente) se creara:
+          // Un action
+          const action = new Action();
+          action.payload = 'test';
+          action.garden = garden;
+          action.actionType = actionType;
+
           await actionService.createAction(action);
+          console.log('action creada');
 
           // se ejecutará un socket a la app mobil y se manda el action creado
           io.emit('watering', action);
@@ -77,7 +86,7 @@ export const generateWaterSchedulers = async () => {
     schedule.active = true;
     delete schedule.daysOfSchedule;
     await scheduleService.editASchedule(schedule.id, schedule);
-  };
+  }
 };
 
 // when stopping your app
