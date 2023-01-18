@@ -46,10 +46,10 @@ export const generateWaterSchedulers = async () => {
     for (const dayOfSchedule of schedule.daysOfSchedule) {
       const wateringJob = scheduler.scheduleJob(
         `watering - scheduleId:${schedule.id}`,
-        // `* * * * ${dayOfSchedule.dayNumber}`,
+        `* * * * ${dayOfSchedule.dayNumber}`,
 
         // `* * * ? * *`, // every second
-        `0 * * ? * *`, // every minute
+        // `0 * * ? * *`, // every minute
         async () => {
           console.log(
             'ejecutando job: regado de schedule ' + schedule.id + ', día ',
@@ -68,6 +68,7 @@ export const generateWaterSchedulers = async () => {
           const action = new Action();
           action.payload = 'test';
           action.garden = garden;
+          action.pending = true;
           action.actionType = actionType;
 
           await actionService.createAction(action);

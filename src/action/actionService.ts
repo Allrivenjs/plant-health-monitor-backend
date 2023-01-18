@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
-import { Action } from '../entity';
+import { Action, ActionType } from '../entity';
 
 export class ActionServices {
   actionEntity: Repository<Action>;
@@ -10,11 +10,26 @@ export class ActionServices {
   }
 
   async findById(id: number) {
-    return this.actionEntity.findOne({ where: { id, } });
+    return this.actionEntity.findOne({ where: { id } });
   }
 
   async findAll() {
-    return this.actionEntity.find({relations: ['actionType', 'garden']});
+    return this.actionEntity.find({ relations: ['actionType', 'garden'] });
+  }
+
+  async findByActionTypePending(actionTypeId: number) {
+    // return this.actionEntity.find({
+    //   where: {actionType}
+    // });
+    //
+    return this.actionEntity
+      .createQueryBuilder('action')
+      .leftJoinAndSelect('action.actionType', 'actionTypes')
+      .where('actionTypes.id = :id', {
+        id: actionTypeId,
+      })
+      .andWhere('action.pending = :pending', { pending: true })
+      .getMany();
   }
 
   async createAction(schedule: Action) {

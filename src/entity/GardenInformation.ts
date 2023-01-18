@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
 } from 'typeorm';
+
 import { Garden } from './Garden';
 
 @Entity()
@@ -18,7 +19,7 @@ export class GardenInformation {
   temperature: number;
 
   @Column()
-  watering_level: number;
+  humidity: number;
 
   @Column()
   sun_level: number;
