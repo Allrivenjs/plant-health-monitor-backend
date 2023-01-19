@@ -25,7 +25,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
 
   const mac = req.headers['x-mac'];
 
-  console.log({temperaturaMedia, humedadMedia, luzMedia, mac});
+  console.log({ temperaturaMedia, humedadMedia, luzMedia, mac });
 
   const wateringActionType = await actionTypeService.findByType(
     ActionTypes.WATERING
@@ -46,27 +46,33 @@ deviceController.post('/data', async (req: Request, res: Response) => {
 
   const garden = await gardenService.findByMac(mac as string);
 
+  if (!garden) {
+    return res.status(404).json({
+      ok: false,
+      message: 'Garden not found with that mac',
+    });
+  }
 
   if (temperaturaMedia < garden.min_temperature) {
     actionService.createActionWithActionType(
       garden,
       ActionTypes.LOW_TEMPERTURE
     );
-  };
+  }
 
   if (temperaturaMedia > garden.max_temperature) {
     actionService.createActionWithActionType(
       garden,
       ActionTypes.HIGH_TEMPERTURE
     );
-  };
+  }
 
   if (humedad > garden.water_levels) {
     actionService.createActionWithActionType(
       garden,
       ActionTypes.HIGH_TEMPERTURE
     );
-  };
+  }
 
   console.log('Creating garden information...');
   const gardenInformation = new GardenInformation();
@@ -81,7 +87,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   io.emit(`device-data-${mac}`, {
     temperatura: temperaturaMedia,
     humedad: humedadMedia,
-    luz: luzMedia
+    luz: luzMedia,
   });
 
   res.json({ watering });
