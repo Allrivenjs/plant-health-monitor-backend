@@ -17,7 +17,7 @@ export enum Levels {
   LOW,
   MEDIUM,
   HIGH,
-}
+};
 
 @Entity()
 export class Garden {
@@ -71,7 +71,7 @@ export class Garden {
     (gardenInformation) => gardenInformation.garden,
     { onDelete: 'CASCADE' }
   )
-  gardenInformation!: GardenInformation[];
+  gardenInformation: GardenInformation[];
 
   @OneToMany(() => Notifications, (notifications) => notifications.garden, {
     onDelete: 'CASCADE',

@@ -10,6 +10,9 @@ export class Action {
   @Column()
   payload: string;
 
+  @Column()
+  pending: boolean;
+
   @ManyToOne(() => Garden, (garden) => garden.actions)
   garden: Garden;
 

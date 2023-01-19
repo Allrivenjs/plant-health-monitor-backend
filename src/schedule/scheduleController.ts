@@ -18,6 +18,7 @@ import { Schedule } from '../entity';
 import { weekdays } from '../constants';
 import { DayOfSchedule } from '../entity/DayOfSchedule';
 import { DayOfScheduleServices } from '../dayOfSchedule';
+import { cancelAllJobs, generateWaterSchedulers } from '../scheduler';
 
 const scheduleService = new ScheduleServices();
 const dayOfScheduleService = new DayOfScheduleServices();
@@ -112,6 +113,17 @@ scheduleController.put(
             }
         )
     );
+
+    
+    // una ves editado el schedule, cancelamos el job que estaba corriendo
+    cancelAllJobs();
+
+    schedule.active = false;
+    delete schedule.daysOfSchedule ;
+    scheduleService.editASchedule(Number(id), schedule);
+    // volvemos a generar los water schedulers
+    generateWaterSchedulers();
+
     
     res.status(201).json({
       ok: true,

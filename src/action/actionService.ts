@@ -1,32 +1,47 @@
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
-import { Action } from '../entity';
+import { Action, ActionType } from '../entity';
 
 export class ActionServices {
-  scheduleEntity: Repository<Action>;
+  actionEntity: Repository<Action>;
 
   constructor() {
-    this.scheduleEntity = AppDataSource.getRepository(Action);
+    this.actionEntity = AppDataSource.getRepository(Action);
   }
 
   async findById(id: number) {
-    return this.scheduleEntity.findOne({ where: { id, }, relations: ['daysOfSchedule'] });
+    return this.actionEntity.findOne({ where: { id } });
   }
 
   async findAll() {
-    return this.scheduleEntity.find({relations: ['actionType', 'garden']});
+    return this.actionEntity.find({ relations: ['actionType', 'garden'] });
+  }
+
+  async findByActionTypePending(actionTypeId: number) {
+    // return this.actionEntity.find({
+    //   where: {actionType}
+    // });
+    //
+    return this.actionEntity
+      .createQueryBuilder('action')
+      .leftJoinAndSelect('action.actionType', 'actionTypes')
+      .where('actionTypes.id = :id', {
+        id: actionTypeId,
+      })
+      .andWhere('action.pending = :pending', { pending: true })
+      .getMany();
   }
 
   async createAction(schedule: Action) {
-    return this.scheduleEntity.save(schedule);
+    return this.actionEntity.save(schedule);
   }
 
   async editAAction(id: number, action: Action) {
-    await this.scheduleEntity.update(id, action);
+    await this.actionEntity.update(id, action);
     return this.findById(id);
   }
 
   async deleteAAction(id: number) {
-    await this.scheduleEntity.delete(id);
+    await this.actionEntity.delete(id);
   }
 }

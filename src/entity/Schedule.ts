@@ -10,6 +10,9 @@ export class Schedule {
   @OneToMany(() => DayOfSchedule, (dayOfSchedule) => dayOfSchedule.schedule, {onDelete: 'CASCADE'})
   daysOfSchedule: DayOfSchedule[];
 
+  @Column({default: false})
+  active: boolean;
+
   @OneToOne(() => Garden, (garden) => garden.schedule, {onDelete: 'CASCADE'})
   garden: Garden;
 
