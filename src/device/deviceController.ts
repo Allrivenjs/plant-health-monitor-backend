@@ -118,5 +118,5 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     luz: luzMedia,
   });
 
-  res.json({ watering });
+  res.json({ regar: !watering });
 });
