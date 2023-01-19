@@ -1,4 +1,5 @@
 import { Repository } from 'typeorm';
+import { io } from '..';
 import { ActionTypeService } from '../actionType';
 import { AppDataSource } from '../data-source';
 import { Action, ActionTypes, Garden } from '../entity';
@@ -17,11 +18,11 @@ export class ActionServices {
   }
 
   async findActionWithGardenByAction(id: number) {
-    return this.actionEntity.findOne({ where: { id }, relations: ['garden'] });
+    return this.actionEntity.findOne({ where: { id }, relations: ['garden'], order: {id: 'DESC'}  });
   }
 
   async findAll() {
-    return this.actionEntity.find({ relations: ['actionType', 'garden'] });
+    return this.actionEntity.find({ relations: ['actionType', 'garden'], order: {id: 'DESC'} });
   }
 
   async findByActionTypePending(actionTypeId: number) {
@@ -48,6 +49,8 @@ export class ActionServices {
     action.garden = garden;
     action.pending = true;
     action.actionType = actionType;
+
+    io.emit('new-action', action)
 
     return this.actionEntity.save(action);
   }

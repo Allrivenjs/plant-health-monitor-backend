@@ -3,7 +3,7 @@ import { io } from '..';
 
 import { ActionServices } from '../action';
 import { ActionTypeService } from '../actionType';
-import { ActionTypes, GardenInformation } from '../entity';
+import { ActionTypes, GardenInformation, Levels } from '../entity';
 import { GardenServices } from '../garden';
 import { GardenInformationServices } from '../gardenInformation';
 
@@ -67,11 +67,39 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     );
   }
 
-  if (humedad > garden.water_levels) {
-    actionService.createActionWithActionType(
-      garden,
-      ActionTypes.HIGH_TEMPERTURE
-    );
+  let waterResistance =
+    garden.water_levels === Levels.LOW
+      ? 25
+      : garden.water_levels === Levels.MEDIUM
+      ? 50
+      : garden.water_levels === Levels.HIGH
+      ? 75
+      : 50;
+
+  let lightResistance =
+    garden.sun_levels === Levels.LOW
+      ? 25
+      : garden.sun_levels === Levels.MEDIUM
+      ? 50
+      : garden.sun_levels === Levels.HIGH
+      ? 75
+      : 50;
+
+
+  if (humedad < waterResistance - 10) {
+    actionService.createActionWithActionType(garden, ActionTypes.LOW_HUMIDITY);
+  }
+
+  if (humedad > waterResistance) {
+    actionService.createActionWithActionType(garden, ActionTypes.HIGH_HUMIDITY);
+  }
+
+  if (luz < lightResistance - 10) {
+    actionService.createActionWithActionType(garden, ActionTypes.LOW_SUN);
+  }
+
+  if (luz > lightResistance) {
+    actionService.createActionWithActionType(garden, ActionTypes.HIGH_SUN);
   }
 
   console.log('Creating garden information...');
