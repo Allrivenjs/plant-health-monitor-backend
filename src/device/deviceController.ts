@@ -14,6 +14,7 @@ export const deviceController = Router();
 deviceController.post('/data', async (req: Request, res: Response) => {
   const { temperatura, humedad, luz } = req.body;
 
+  console.log({...req.body});
   console.log({temperatura, humedad, luz});
 
   const wateringActionType = await actionTypeService.findByType(
