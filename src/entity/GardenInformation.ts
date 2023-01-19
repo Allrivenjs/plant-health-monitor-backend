@@ -27,6 +27,6 @@ export class GardenInformation {
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
-  @ManyToOne(() => Garden, (garden) => garden.gardenInformation)
+  @ManyToOne(() => Garden, (garden) => garden.gardenInformation, {onDelete: 'CASCADE'})
   garden: Garden;
 }

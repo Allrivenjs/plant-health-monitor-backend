@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import { AppDataSource } from '../data-source';
-import { GardenInformation } from '../entity';
+import { Garden, GardenInformation } from '../entity';
 
 export class GardenInformationServices {
   gardenInformationEntity: Repository<GardenInformation>;
@@ -14,8 +14,20 @@ export class GardenInformationServices {
     return this.gardenInformationEntity.findOne({ where: { id } });
   }
 
+  async findByGardenId(id: number) {
+    return this.gardenInformationEntity
+      .createQueryBuilder('gardenInformation')
+      .leftJoinAndSelect('gardenInformation.garden', 'garden')
+      .where('garden.id = :id', {
+        id: id,
+      })
+      .orderBy('gardenInformation.id', 'DESC')
+      .getMany();
+    // return this.gardenInformationEntity.find({ where: { garden } });
+  }
+
   async findAll() {
-    return this.gardenInformationEntity.find();
+    return this.gardenInformationEntity.find({ order: { id: 'DESC' } });
   }
 
   async createGardenInformation(gardenInformation: GardenInformation) {

@@ -5,6 +5,8 @@ const name = Joi.string().min(3).max(50);
 
 const image = Joi.string();
 
+const device_mac = Joi.string();
+
 const plant_type = Joi.string().min(3).max(50);
 
 const min_temperature = Joi.number();
@@ -27,6 +29,7 @@ const createAGardenScheme = Joi.object({
   water_levels: water_levels.required(),
   sun_levels: sun_levels.required(),
   user_id: id.required(),
+  device_mac: device_mac.required(),
 });
 
 const gardenIdSchema = Joi.object({
@@ -42,6 +45,7 @@ const editAGardenScheme = Joi.object({
   water_levels: water_levels,
   sun_levels: sun_levels,
   user_id: id.required(),
+  device_mac: device_mac,
 });
 
 export {

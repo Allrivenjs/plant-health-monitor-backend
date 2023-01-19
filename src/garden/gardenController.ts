@@ -4,17 +4,23 @@ import passport from 'passport';
 import { GardenServices } from './gardenService';
 import { Garden } from '../entity';
 import { validatorHandler } from '../middlewares';
-import { createAGardenScheme, editAGardenIdScheme, editAGardenScheme } from './gardenSchema';
+import {
+  createAGardenScheme,
+  editAGardenIdScheme,
+  editAGardenScheme,
+} from './gardenSchema';
 import { UserServices } from '../user/userService';
 import { Schedule } from '../entity';
 import { ScheduleServices } from '../schedule';
 import { weekdays } from '../constants';
 import { DayOfScheduleServices } from '../dayOfSchedule';
 import { DayOfSchedule } from '../entity/DayOfSchedule';
+import { ActionServices } from '../action';
 
 const gardenService = new GardenServices();
 const scheduleService = new ScheduleServices();
 const dayOfScheduleService = new DayOfScheduleServices();
+const actionService = new ActionServices();
 const userService = new UserServices();
 
 export const gardenController = Router();
@@ -34,7 +40,6 @@ gardenController.post(
   validatorHandler(createAGardenScheme, 'body'),
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
-
     const {
       name,
       image,
@@ -44,6 +49,7 @@ gardenController.post(
       user_id,
       water_levels,
       sun_levels,
+      device_mac,
     } = req.body;
 
     const user = await userService.findById(user_id);
@@ -59,34 +65,35 @@ gardenController.post(
     await scheduleService.createSchedule(gardenSchedule);
 
     weekdays.forEach(({ dayNumber, name, abbreviation, keyName }) => {
-      dayOfScheduleService.createDayOfSchedule(DayOfSchedule.makeDayOfSchedule(
+      dayOfScheduleService.createDayOfSchedule(
+        DayOfSchedule.makeDayOfSchedule(
           dayNumber,
-            name,
-            abbreviation,
-            keyName,
-            false,
-            0,
-            gardenSchedule
-      ));
+          name,
+          abbreviation,
+          keyName,
+          false,
+          0,
+          gardenSchedule
+        )
+      );
     });
 
-
-      const garden = Garden.makeGarden(
-        name,
-        image,
-        plant_type,
-        max_temperature,
-        min_temperature,
-        water_levels,
-        sun_levels,
-        user,
-        gardenSchedule
-      );
+    const garden = Garden.makeGarden(
+      name,
+      image,
+      plant_type,
+      max_temperature,
+      min_temperature,
+      water_levels,
+      sun_levels,
+      device_mac,
+      user,
+      gardenSchedule
+    );
 
     const newGarden = await gardenService.createGarden(garden);
 
-
-    res.status(201).json({ 
+    res.status(201).json({
       ok: true,
       garden: newGarden,
     });
@@ -99,7 +106,6 @@ gardenController.get(
   validatorHandler(editAGardenIdScheme, 'params'),
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
-
     const { id } = req.params;
 
     const garden = await gardenService.findById(Number(id));
@@ -111,7 +117,7 @@ gardenController.get(
       });
     }
 
-    res.status(201).json({ 
+    res.status(201).json({
       ok: true,
       garden,
     });
@@ -125,7 +131,6 @@ gardenController.put(
   validatorHandler(editAGardenScheme, 'body'),
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
-
     const { id } = req.params;
 
     const {
@@ -137,8 +142,8 @@ gardenController.put(
       user_id,
       water_levels,
       sun_levels,
+      device_mac,
     } = req.body;
-
 
     const user = await userService.findById(user_id);
 
@@ -148,7 +153,6 @@ gardenController.put(
         message: 'User not found',
       });
     }
-
 
     const garden = await gardenService.findById(Number(id));
 
@@ -161,7 +165,9 @@ gardenController.put(
 
     delete garden.actions;
 
-    const editedGarden = await gardenService.editAGarden(Number(id), Garden.updateGarden(
+    const editedGarden = await gardenService.editAGarden(
+      Number(id),
+      Garden.updateGarden(
         garden,
         name,
         image,
@@ -170,17 +176,18 @@ gardenController.put(
         max_temperature,
         water_levels,
         sun_levels,
+        device_mac,
         user,
         garden.schedule
-    ));
+      )
+    );
 
-    res.status(201).json({ 
+    res.status(201).json({
       ok: true,
       garden: editedGarden,
     });
   }
 );
-
 
 // delete a garden
 gardenController.delete(
@@ -188,7 +195,6 @@ gardenController.delete(
   validatorHandler(editAGardenIdScheme, 'params'),
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
-
     const { id } = req.params;
 
     const garden = await gardenService.findById(Number(id));
@@ -200,10 +206,16 @@ gardenController.delete(
       });
     }
 
+    // Promise.all(
+    //   garden.actions.map(async (action) => {
+    //     await actionService.deleteAAction(action.id);
+    //   })
+    // );
+
     await gardenService.deleteAGarden(Number(id));
     await scheduleService.deleteASchedule(garden.schedule.id);
 
-    res.status(201).json({ 
+    res.status(201).json({
       ok: true,
       garden,
     });
