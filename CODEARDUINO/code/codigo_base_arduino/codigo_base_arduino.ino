@@ -1,3 +1,4 @@
+#include <Wire.h>
 #include <ESP8266WiFi.h>
 #include <WiFiManager.h>
 #include <strings_en.h>
@@ -6,10 +7,11 @@
 #include <ArduinoJson.h>  // Importa la librería ArduinoJson para poder trabajar con objetos JSON
 #include <DHT.h>
 #include <ESP8266HTTPClient.h>
+#include <Adafruit_ADS1X15.h>
 
 // Pines de cada sensor
 #define LIGHT_SENSOR_PIN 15  // Pin del sensor de luz
-#define DHTPIN 14  // Pin del sensor de temperatura
+#define DHTPIN D5  // Pin del sensor de temperatura
 #define HUMEDAD_PIN 12  // Pin del sensor de temperatura
 #define HUM_SENSOR_PIN A2  // Pin del sensor de humedad
 
@@ -22,11 +24,15 @@ float humValue;
 #define DHTTYPE DHT22
 DynamicJsonDocument jsonDoc(4024);
 
-const char* serverAddress = "https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
-const int serverPort = 443;
+const String serverAddress = "192.168.1.88"; //"https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
+const char*  fingerprint = "14 8B 97 9B 8D 33 14 33 C6 9A 4A CA 24 AD AA B9 8F 74 3A F2";
 WiFiClient clientW;
 HTTPClient http;
 DHT dht(DHTPIN, DHTTYPE);
+WiFiClientSecure client;
+Adafruit_ADS1115 ads;
+
+int16_t adc0, adc1, adc2, adc3;
 
 void wifiSetup(){
   //Creamos una instancia de la clase WifiManager
@@ -41,21 +47,26 @@ void wifiSetup(){
 
 
 void InitHttp(){
-  http.begin(clientW, serverAddress, serverPort,"/test", true);
-  int httpCode = http.GET();
-  if (httpCode > 0) {
-    // Si la solicitud fue exitosa, leer la respuesta del servidor
-    String payload = http.getString();
-    Serial.println(httpCode);
-    Serial.println(payload);
-  } else {
-    // Si la solicitud no fue exitosa, mostrar un mensaje de error
-    Serial.println("Error al hacer la solicitud GET");
-  }
-
-  // Finalizar la solicitud HTTP
-  // http.end();
-}
+  String fullRequest = serverAddress + "/test";
+  // client.connect(fullRequest, 3000);
+  // if(client.setFingerprint(fingerprint)){
+      http.begin(clientW, fullRequest, 3000);
+      int httpCode = http.GET();
+        if (httpCode > 0) {
+      // Si la solicitud fue exitosa, leer la respuesta del servidor
+      String payload = http.getString();
+      Serial.println(httpCode);
+      Serial.println(payload);
+    } else {
+      // Si la solicitud no fue exitosa, mostrar un mensaje de error
+      Serial.println("Error al hacer la solicitud GET");
+      Serial.println("Request failed: " + http.errorToString(httpCode));
+    }
+//   }else 
+//       {
+//         Serial.println("certificate doesn't match");
+//       }
+ }
 
  void getDhtDataSensor(){
     // put your main code here, to run repeatedly:
@@ -65,18 +76,18 @@ void InitHttp(){
   jsonDoc["temperatura"] = tempValue;
   jsonDoc["humedad"] = humValue;
 
-  // // Imprime la lectura en la consola
-  // Serial.print("Temperatura: ");
-  // Serial.print(tempValue);
-  // Serial.println(" grados Celsius");
+  // Imprime la lectura en la consola
+  Serial.print("Temperatura: ");
+  Serial.print(tempValue);
+  Serial.println(" grados Celsius");
 
-  // Serial.print("Humedad: ");
-  // Serial.print(humValue);
-  // Serial.println(" %");
+  Serial.print("Humedad: ");
+  Serial.print(humValue);
+  Serial.println(" %");
 
 }
 void getSensorLuzData(){
-  int lightValue = analogRead(LIGHT_SENSOR_PIN);
+  int lightValue = adc0;
   // Serial.print("Valor en bruto luz: ");
   // Serial.print(SensorValue2);
   // // delay(100);
@@ -104,15 +115,39 @@ void getDataToJson() {
 
 
 void setup() {
+  Wire.begin(D4, D3);
   Serial.begin(115200);
   wifiSetup();
   InitHttp();
+  pinMode(DHTPIN, INPUT);
   dht.begin();
+ // Iniciar el ADS1115
+  ads.setGain(GAIN_FOUR);
+  ads.begin();
+
+
+  
+  
 }
 
 void loop() {
   // Ejecuta la función getDataToJson() cada segundo
+  adc0 = ads.readADC_SingleEnded(0);
+  adc1 = ads.readADC_SingleEnded(1);
+  adc2 = ads.readADC_SingleEnded(2);
+  adc3 = ads.readADC_SingleEnded(3);
+
   getDataToJson();
+  Serial.print("A0: "); 
+  Serial.println(adc0);
+  // Serial.print("A1: "); 
+  // Serial.println(adc1);
+  // Serial.print("A2: "); 
+  // Serial.println(adc2);
+  // Serial.print("A3: "); 
+  // Serial.println(adc3);
+  
+
   delay(1000);
 
   // Ejecuta otra operación cada minuto
@@ -120,6 +155,21 @@ void loop() {
   if (millis() - lastMinute >= 60000) {
     // Tu código aquí...
     lastMinute = millis();
+    String url =  serverAddress + "/api/v1/device/data";
+    http.begin(client, url);
+    String jsonString;
+    serializeJson(jsonDoc, jsonString);
+    int httpCode = http.POST(jsonString);
+    if (httpCode > 0) {
+        // Si la solicitud fue exitosa, leer la respuesta del servidor
+        String payload = http.getString();
+        Serial.println(httpCode);
+        Serial.println(payload);
+      } else {
+        // Si la solicitud no fue exitosa, mostrar un mensaje de error
+        Serial.println("Error al hacer la solicitud GET");
+        Serial.println("Request failed: " + http.errorToString(httpCode));
+      }
   }
 
 
