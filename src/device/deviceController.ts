@@ -23,6 +23,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
 
   console.log({...req.body});
   console.log({temperatura, humedad, luz});
+
   console.log({temperaturaMedia, humedadMedia, luzMedia});
 
   const wateringActionType = await actionTypeService.findByType(
