@@ -26,7 +26,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   console.log({temperaturaMedia, humedadMedia, luzMedia});
 
   console.log({...req.headers});
-  console.log({mac: req.headers['X-MAC']});
+  console.log({mac: req.headers['x-mac']});
 
   const wateringActionType = await actionTypeService.findByType(
     ActionTypes.WATERING
