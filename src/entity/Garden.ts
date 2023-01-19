@@ -31,6 +31,9 @@ export class Garden {
   image: string;
 
   @Column()
+  device_mac: string;
+
+  @Column()
   plant_type: string;
 
   @Column()
