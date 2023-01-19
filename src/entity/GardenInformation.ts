@@ -24,7 +24,7 @@ export class GardenInformation {
   @Column()
   sun_level: number;
 
-  @Column()
+  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
 
   @ManyToOne(() => Garden, (garden) => garden.gardenInformation)
