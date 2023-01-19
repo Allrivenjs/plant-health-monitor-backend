@@ -24,7 +24,7 @@ float humValue;
 #define DHTTYPE DHT22
 DynamicJsonDocument jsonDoc(4024);
 
-const String serverAddress = "192.168.1.88"; //"https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
+const String serverAddress = "https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
 const char*  fingerprint = "14 8B 97 9B 8D 33 14 33 C6 9A 4A CA 24 AD AA B9 8F 74 3A F2";
 WiFiClient clientW;
 HTTPClient http;
@@ -33,6 +33,7 @@ WiFiClientSecure client;
 Adafruit_ADS1115 ads;
 
 int16_t adc0, adc1, adc2, adc3;
+String mac;
 
 void wifiSetup(){
   //Creamos una instancia de la clase WifiManager
@@ -41,6 +42,7 @@ void wifiSetup(){
   wifiManager.autoConnect("WIFI_ES8266");
   Serial.println(WiFi.localIP());
   Serial.println(WiFi.macAddress());
+  mac = WiFi.macAddress();
   Serial.println("Ya estas conectado");
   
 }
@@ -48,9 +50,9 @@ void wifiSetup(){
 
 void InitHttp(){
   String fullRequest = serverAddress + "/test";
-  // client.connect(fullRequest, 3000);
-  // if(client.setFingerprint(fingerprint)){
-      http.begin(clientW, fullRequest, 3000);
+  client.connect(fullRequest, 3000);
+  if(client.setFingerprint(fingerprint)){
+      http.begin(client, fullRequest);
       int httpCode = http.GET();
         if (httpCode > 0) {
       // Si la solicitud fue exitosa, leer la respuesta del servidor
@@ -61,11 +63,12 @@ void InitHttp(){
       // Si la solicitud no fue exitosa, mostrar un mensaje de error
       Serial.println("Error al hacer la solicitud GET");
       Serial.println("Request failed: " + http.errorToString(httpCode));
+      
     }
-//   }else 
-//       {
-//         Serial.println("certificate doesn't match");
-//       }
+  }else 
+      {
+        Serial.println("certificate doesn't match");
+      }
  }
 
  void getDhtDataSensor(){
@@ -73,17 +76,17 @@ void InitHttp(){
   tempValue = dht.readTemperature();
   humValue = dht.readHumidity();
 
-  jsonDoc["temperatura"] = tempValue;
-  jsonDoc["humedad"] = humValue;
+  jsonDoc["temperatura"].add(tempValue);
+  jsonDoc["humedad"].add(humValue);
 
-  // Imprime la lectura en la consola
-  Serial.print("Temperatura: ");
-  Serial.print(tempValue);
-  Serial.println(" grados Celsius");
+  // // Imprime la lectura en la consola
+  // Serial.print("Temperatura: ");
+  // Serial.print(tempValue);
+  // Serial.println(" grados Celsius");
 
-  Serial.print("Humedad: ");
-  Serial.print(humValue);
-  Serial.println(" %");
+  // Serial.print("Humedad: ");
+  // Serial.print(humValue);
+  // Serial.println(" %");
 
 }
 void getSensorLuzData(){
@@ -93,9 +96,16 @@ void getSensorLuzData(){
   // // delay(100);
   // Serial.print("Valor e porcentaje de luz: ");
   lightValue = map(lightValue, 0, 1024, -10, 100);
-  jsonDoc["luz"] = lightValue;
-  // Serial.print(luz); Serial.print("%");
+  lightValue = constrain(lightValue, -10, 100);
+  jsonDoc["luz"].add(lightValue);
+  // Serial.print(lightValue); Serial.print("%");
   // delay(100);
+}
+
+void getHumedadSensor(){
+  float hum = map(analogRead(A0), 803, 370, 0, 100); 
+  jsonDoc["humedadSensor"].add(hum);
+  // Serial.println(hum);
 }
 
 // function to calculate humidity from the raw sensor value
@@ -111,6 +121,7 @@ float calculateHumidity(int sensorValue) {
 void getDataToJson() {
   getDhtDataSensor();
   getSensorLuzData();
+  getHumedadSensor();
 }
 
 
@@ -122,12 +133,9 @@ void setup() {
   pinMode(DHTPIN, INPUT);
   dht.begin();
  // Iniciar el ADS1115
-  ads.setGain(GAIN_FOUR);
+  // ads.setGain(GAIN_ONE);
   ads.begin();
 
-
-  
-  
 }
 
 void loop() {
@@ -138,15 +146,18 @@ void loop() {
   adc3 = ads.readADC_SingleEnded(3);
 
   getDataToJson();
-  Serial.print("A0: "); 
-  Serial.println(adc0);
+
+  // Serial.print("A0: "); 
+  // Serial.println(adc0);
   // Serial.print("A1: "); 
   // Serial.println(adc1);
   // Serial.print("A2: "); 
   // Serial.println(adc2);
   // Serial.print("A3: "); 
   // Serial.println(adc3);
-  
+  // serializeJson(jsonDoc, Serial);
+  // Serial.println("");
+
 
   delay(1000);
 
@@ -159,12 +170,16 @@ void loop() {
     http.begin(client, url);
     String jsonString;
     serializeJson(jsonDoc, jsonString);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("X-MAC", mac);
     int httpCode = http.POST(jsonString);
     if (httpCode > 0) {
         // Si la solicitud fue exitosa, leer la respuesta del servidor
         String payload = http.getString();
         Serial.println(httpCode);
         Serial.println(payload);
+        jsonDoc.clear();
+
       } else {
         // Si la solicitud no fue exitosa, mostrar un mensaje de error
         Serial.println("Error al hacer la solicitud GET");
