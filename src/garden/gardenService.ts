@@ -16,6 +16,12 @@ export class GardenServices {
     });
   }
 
+  async findByMac(mac: string) {
+    return this.gardenEntity.findOne({
+      where: { device_mac: mac },
+    });
+  }
+
   async findScheduleByGardenId(gardenId: number) {
     return this.gardenEntity.findOne({
       where: { id: gardenId },

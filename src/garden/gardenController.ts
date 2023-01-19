@@ -44,6 +44,7 @@ gardenController.post(
       user_id,
       water_levels,
       sun_levels,
+      device_mac,
     } = req.body;
 
     const user = await userService.findById(user_id);
@@ -79,6 +80,7 @@ gardenController.post(
         min_temperature,
         water_levels,
         sun_levels,
+        device_mac,
         user,
         gardenSchedule
       );
@@ -137,6 +139,7 @@ gardenController.put(
       user_id,
       water_levels,
       sun_levels,
+      device_mac,
     } = req.body;
 
 
@@ -170,6 +173,7 @@ gardenController.put(
         max_temperature,
         water_levels,
         sun_levels,
+        device_mac,
         user,
         garden.schedule
     ));

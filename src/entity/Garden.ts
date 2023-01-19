@@ -96,6 +96,7 @@ export class Garden {
     max_temperature: number,
     water_levels: Levels,
     sun_levels: Levels,
+    device_mac: string,
     user: User,
     schedule: Schedule
   ) {
@@ -106,6 +107,7 @@ export class Garden {
     garden.max_temperature = max_temperature;
     garden.water_levels = water_levels;
     garden.sun_levels = sun_levels;
+    garden.device_mac = device_mac;
     garden.user = user;
     garden.schedule = schedule;
     return garden;
@@ -119,6 +121,7 @@ export class Garden {
     max_temperature: number,
     water_levels: Levels,
     sun_levels: Levels,
+    device_mac: string,
     user: User,
     schedule: Schedule
   ) {
@@ -131,6 +134,7 @@ export class Garden {
       max_temperature,
       water_levels,
       sun_levels,
+      device_mac,
       user,
       schedule
     );
@@ -145,6 +149,7 @@ export class Garden {
     max_temperature: number,
     water_levels: Levels,
     sun_levels: Levels,
+    device_mac: string,
     user: User,
     schedule: Schedule
   ) {
@@ -157,6 +162,7 @@ export class Garden {
       max_temperature,
       water_levels,
       sun_levels,
+      device_mac,
       user,
       schedule
     );

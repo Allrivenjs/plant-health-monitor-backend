@@ -23,10 +23,9 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   let humedadMedia = meanOfAnArray(humedad);
   let luzMedia = meanOfAnArray(luz);
 
-  console.log({temperaturaMedia, humedadMedia, luzMedia});
+  const mac = req.headers['x-mac'];
 
-  console.log({...req.headers});
-  console.log({mac: req.headers['x-mac']});
+  console.log({temperaturaMedia, humedadMedia, luzMedia, mac});
 
   const wateringActionType = await actionTypeService.findByType(
     ActionTypes.WATERING
@@ -45,37 +44,39 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     })
   );
 
+  const garden = await gardenService.findByMac(mac as string);
 
-  // if (temperatura < action.garden.min_temperature) {
-  //   actionService.createActionWithActionType(
-  //     action.garden,
-  //     ActionTypes.LOW_TEMPERTURE
-  //   );
-  // };
-  //
-  // if (temperatura > action.garden.max_temperature) {
-  //   actionService.createActionWithActionType(
-  //     action.garden,
-  //     ActionTypes.HIGH_TEMPERTURE
-  //   );
-  // };
-  //
-  // if (humedad > action.garden.water_levels) {
-  //   actionService.createActionWithActionType(
-  //     action.garden,
-  //     ActionTypes.HIGH_TEMPERTURE
-  //   );
-  // };
-  //
-  // console.log('Creating garden information...');
-  // const gardenInformation = new GardenInformation();
-  // gardenInformation.name = 'test';
-  // gardenInformation.humidity = humedadMedia;
-  // gardenInformation.temperature = temperaturaMedia;
-  // gardenInformation.sun_level = luzMedia;
-  // gardenInformation.garden = action.garden;
-  //
-  // await gardenInformationService.createGardenInformation(gardenInformation);
+
+  if (temperaturaMedia < garden.min_temperature) {
+    actionService.createActionWithActionType(
+      garden,
+      ActionTypes.LOW_TEMPERTURE
+    );
+  };
+
+  if (temperaturaMedia > garden.max_temperature) {
+    actionService.createActionWithActionType(
+      garden,
+      ActionTypes.HIGH_TEMPERTURE
+    );
+  };
+
+  if (humedad > garden.water_levels) {
+    actionService.createActionWithActionType(
+      garden,
+      ActionTypes.HIGH_TEMPERTURE
+    );
+  };
+
+  console.log('Creating garden information...');
+  const gardenInformation = new GardenInformation();
+  gardenInformation.name = 'test';
+  gardenInformation.humidity = humedadMedia;
+  gardenInformation.temperature = temperaturaMedia;
+  gardenInformation.sun_level = luzMedia;
+  gardenInformation.garden = garden;
+
+  await gardenInformationService.createGardenInformation(gardenInformation);
 
   io.emit('device-data', {
     temperatura: temperaturaMedia,
