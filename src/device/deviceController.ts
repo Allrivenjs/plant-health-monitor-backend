@@ -78,7 +78,9 @@ deviceController.post('/data', async (req: Request, res: Response) => {
 
   await gardenInformationService.createGardenInformation(gardenInformation);
 
-  io.emit('device-data', {
+  console.log(`device-data-${mac}`);
+
+  io.emit(`device-data-${mac}`, {
     temperatura: temperaturaMedia,
     humedad: humedadMedia,
     luz: luzMedia
