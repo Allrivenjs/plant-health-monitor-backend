@@ -49,12 +49,16 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
   console.log('a user connected');
 
+  console.log(io.sockets.adapter.rooms);
+
   socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
 
 app.get('/test', (req: Request, res: Response) => {
+
+  console.log(io.sockets.adapter.rooms);
   res.json({
     test: 'hello',
   });
