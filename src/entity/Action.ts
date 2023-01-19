@@ -5,7 +5,7 @@ import { ActionType } from './ActionType';
 @Entity()
 export class Action {
   @PrimaryGeneratedColumn()
-  id!: number;
+  id: number;
 
   @Column()
   payload: string;
@@ -13,7 +13,7 @@ export class Action {
   @Column()
   pending: boolean;
 
-  @ManyToOne(() => Garden, (garden) => garden.actions)
+  @ManyToOne(() => Garden, (garden) => garden.actions, {onDelete:'CASCADE'})
   garden: Garden;
 
   @ManyToOne(() => ActionType, (actionType) => actionType.actions)

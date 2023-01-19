@@ -22,7 +22,7 @@ export class Notifications {
   @Column()
   read_at: Date;
 
-  @ManyToOne(() => Garden, (garden) => garden.notifications)
+  @ManyToOne(() => Garden, (garden) => garden.notifications, {onDelete: 'CASCADE'})
   garden: Garden;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })

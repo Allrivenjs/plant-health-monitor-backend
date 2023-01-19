@@ -15,7 +15,7 @@ import {
   errorHandler,
   logErrors,
 } from './middlewares/errorHandler';
-import { startGardenWateringSchedule } from './sockets';
+
 import { generateWaterSchedulers } from './scheduler';
 
 const app = express();
@@ -49,7 +49,7 @@ app.use(errorHandler);
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  console.log(io.sockets.adapter.rooms);
+  // console.log(io.sockets.adapter.rooms);
 
   socket.on('disconnect', () => {
     console.log('user disconnected');

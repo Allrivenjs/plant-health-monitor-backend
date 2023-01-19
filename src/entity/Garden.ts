@@ -17,7 +17,7 @@ export enum Levels {
   LOW,
   MEDIUM,
   HIGH,
-};
+}
 
 @Entity()
 export class Garden {
@@ -58,7 +58,7 @@ export class Garden {
 
   @OneToOne(() => Schedule, (schedule) => schedule.garden, {
     onDelete: 'CASCADE',
-    cascade: true
+    cascade: true,
   })
   @JoinColumn()
   schedule: Schedule;
@@ -66,7 +66,10 @@ export class Garden {
   @ManyToOne(() => User, (user) => user.garden)
   user: User;
 
-  @OneToMany(() => Action, (action) => action.garden, { onDelete: 'CASCADE',  })
+  @OneToMany(() => Action, (action) => action.garden, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   actions: Action[];
 
   @OneToMany(
@@ -79,7 +82,7 @@ export class Garden {
   @OneToMany(() => Notifications, (notifications) => notifications.garden, {
     onDelete: 'CASCADE',
   })
-  notifications!: Notifications[];
+  notifications: Notifications[];
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   created_at: Date;
