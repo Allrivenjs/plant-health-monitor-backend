@@ -21,12 +21,13 @@ export class GardenInformationServices {
       .where('garden.id = :id', {
         id: id,
       })
+      .orderBy('gardenInformation.id', 'DESC')
       .getMany();
     // return this.gardenInformationEntity.find({ where: { garden } });
   }
 
   async findAll() {
-    return this.gardenInformationEntity.find();
+    return this.gardenInformationEntity.find({ order: { id: 'DESC' } });
   }
 
   async createGardenInformation(gardenInformation: GardenInformation) {
