@@ -57,7 +57,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
       gardenInformation.sun_level = luz;
       gardenInformation.garden = action.garden;
 
-      gardenInformationService.createGardenInformation(gardenInformation);
+      await gardenInformationService.createGardenInformation(gardenInformation);
 
       action.pending = false;
       await actionService.editAAction(action.id, action);
