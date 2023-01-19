@@ -1,9 +1,12 @@
 import { Request, Response, Router } from 'express';
+import { io } from '..';
 
 import { ActionServices } from '../action';
 import { ActionTypeService } from '../actionType';
 import { ActionTypes, GardenInformation } from '../entity';
 import { GardenInformationServices } from '../gardenInformation';
+
+import { meanOfAnArray } from '../utils';
 
 const gardenInformationService = new GardenInformationServices();
 const actionService = new ActionServices();
@@ -12,10 +15,15 @@ const actionTypeService = new ActionTypeService();
 export const deviceController = Router();
 
 deviceController.post('/data', async (req: Request, res: Response) => {
-  const { temperatura, humedad, luz } = req.body;
+  let { temperatura, humedad, luz } = req.body;
+
+  let temperaturaMedia = meanOfAnArray(temperatura);
+  let humedadMedia = meanOfAnArray(humedad);
+  let luzMedia = meanOfAnArray(luz);
 
   console.log({...req.body});
   console.log({temperatura, humedad, luz});
+  console.log({temperaturaMedia, humedadMedia, luzMedia});
 
   const wateringActionType = await actionTypeService.findByType(
     ActionTypes.WATERING
@@ -53,9 +61,9 @@ deviceController.post('/data', async (req: Request, res: Response) => {
       console.log('Creating garden information...');
       const gardenInformation = new GardenInformation();
       gardenInformation.name = 'test';
-      gardenInformation.humidity = humedad;
-      gardenInformation.temperature = temperatura;
-      gardenInformation.sun_level = luz;
+      gardenInformation.humidity = humedadMedia;
+      gardenInformation.temperature = temperaturaMedia;
+      gardenInformation.sun_level = luzMedia;
       gardenInformation.garden = action.garden;
 
       await gardenInformationService.createGardenInformation(gardenInformation);
@@ -64,6 +72,12 @@ deviceController.post('/data', async (req: Request, res: Response) => {
       await actionService.editAAction(action.id, action);
     })
   );
+
+  io.emit('device-data', {
+    temperaturaMedia,
+    humedadMedia,
+    luzMedia
+  });
 
   res.json({ watering });
 });
