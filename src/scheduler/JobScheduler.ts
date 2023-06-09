@@ -14,7 +14,7 @@ export class JobScheduler {
   static createAJob(id: number, dayNumber: number, callback: () => void) {
     const wateringJob = scheduleJob(
       `watering - scheduleId:${id}`,
-      `0 13 * * ${dayNumber}`, // every dayNumber at minute 0 and second 0
+      `0 16 * * ${dayNumber}`, // every dayNumber at minute 0 and second 0
 
       // `* * * ? * *`, // every second
       // `0 * * ? * *`, // every minute
