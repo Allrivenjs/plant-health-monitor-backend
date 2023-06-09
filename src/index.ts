@@ -16,7 +16,11 @@ import {
   logErrors,
 } from './middlewares/errorHandler';
 
-import { generateWaterSchedulers } from './scheduler';
+import { generateWaterSchedulers, resetSchedules } from './scheduler';
+
+require('console-stamp')(console, {
+  format: ':date(yyyy/mm/dd HH:MM:ss.l):label',
+});
 
 const app = express();
 
@@ -30,8 +34,8 @@ export const io = new Server(server);
 
 AppDataSource.initialize()
   .then(async () => {
-    // startGardenWateringSchedule();
-    generateWaterSchedulers();
+    await resetSchedules();
+    await generateWaterSchedulers();
   })
   .catch((error) => console.log(error));
 
@@ -57,7 +61,6 @@ io.on('connection', (socket) => {
 });
 
 app.get('/test', (req: Request, res: Response) => {
-
   console.log(io.sockets.adapter.rooms);
   res.json({
     test: 'hello',

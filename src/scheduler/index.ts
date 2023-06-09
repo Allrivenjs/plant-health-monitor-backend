@@ -1,10 +1,9 @@
-import scheduler from 'node-schedule';
-
 import { io } from '..';
+
 import { ActionServices } from '../action';
 import { ActionTypeService } from '../actionType';
 
-import { Action, ActionTypes } from '../entity';
+import { Action, ActionTypes, Schedule } from '../entity';
 
 import { ScheduleServices } from '../schedule/scheduleService';
 import { JobScheduler } from './JobScheduler';
@@ -53,6 +52,7 @@ export const generateWaterSchedulers = async () => {
             ' ',
             dayOfSchedule.dayNumber + '-' + dayOfSchedule.name
           );
+
           const scheduleWithGarden =
             await scheduleService.findGardenByScheduleId(schedule.id);
           const garden = scheduleWithGarden.garden;
@@ -87,4 +87,18 @@ export const generateWaterSchedulers = async () => {
   }
 
   console.log('actual jobs: ', JobScheduler.toString());
+};
+
+export const resetSchedules = async () => {
+  console.log('*********************************');
+  console.log('***Reseting schedules in the db***');
+  console.log('*********************************');
+
+  const schedules = await scheduleService.findAll();
+
+  for (const schedule of schedules) {
+    schedule.active = false;
+    delete schedule.daysOfSchedule;
+    await scheduleService.editASchedule(schedule.id, schedule);
+  }
 };
