@@ -18,7 +18,8 @@ import { Schedule } from '../entity';
 import { weekdays } from '../constants';
 import { DayOfSchedule } from '../entity/DayOfSchedule';
 import { DayOfScheduleServices } from '../dayOfSchedule';
-import { cancelAllJobs, generateWaterSchedulers } from '../scheduler';
+import { generateWaterSchedulers } from '../scheduler';
+import { JobScheduler } from '../scheduler/JobScheduler';
 
 const scheduleService = new ScheduleServices();
 const dayOfScheduleService = new DayOfScheduleServices();
@@ -57,18 +58,20 @@ scheduleController.post(
     const newSchedule = new Schedule();
 
     await Promise.all(
-        weekdays.map(async ({dayNumber, name, abbreviation, keyName}) => {
-            await dayOfScheduleService.createDayOfSchedule(DayOfSchedule.assignDayOfSchedule(
-                new DayOfSchedule(),
-                dayNumber,
-                name,
-                abbreviation,
-                keyName,
-                req.body[keyName].cuantity,
-                req.body[keyName].active,
-                newSchedule
-            ));
-        })
+      weekdays.map(async ({ dayNumber, name, abbreviation, keyName }) => {
+        await dayOfScheduleService.createDayOfSchedule(
+          DayOfSchedule.assignDayOfSchedule(
+            new DayOfSchedule(),
+            dayNumber,
+            name,
+            abbreviation,
+            keyName,
+            req.body[keyName].cuantity,
+            req.body[keyName].active,
+            newSchedule
+          )
+        );
+      })
     );
 
     await scheduleService.createSchedule(newSchedule);
@@ -101,30 +104,35 @@ scheduleController.put(
     }
 
     await Promise.all(
-        weekdays.map(
-            async ({dayNumber, name, abbreviation, keyName}, index) => {
-                await dayOfScheduleService.editADayOfSchedule(
-                    schedule.daysOfSchedule[index].id,
-                    DayOfSchedule.assignDayOfSchedule(
-                      schedule.daysOfSchedule[index], 
-                     dayNumber, name, abbreviation, keyName, req.body[keyName].cuantity, req.body[keyName].active, schedule
-                    )
-                );
-            }
-        )
+      weekdays.map(
+        async ({ dayNumber, name, abbreviation, keyName }, index) => {
+          await dayOfScheduleService.editADayOfSchedule(
+            schedule.daysOfSchedule[index].id,
+            DayOfSchedule.assignDayOfSchedule(
+              schedule.daysOfSchedule[index],
+              dayNumber,
+              name,
+              abbreviation,
+              keyName,
+              req.body[keyName].cuantity,
+              req.body[keyName].active,
+              schedule
+            )
+          );
+        }
+      )
     );
 
-    
     // una ves editado el schedule, cancelamos el job que estaba corriendo
-    cancelAllJobs();
+    JobScheduler.cancelAJob(schedule.id);
 
     schedule.active = false;
-    delete schedule.daysOfSchedule ;
-    scheduleService.editASchedule(Number(id), schedule);
-    // volvemos a generar los water schedulers
-    generateWaterSchedulers();
 
-    
+    delete schedule.daysOfSchedule;
+    await scheduleService.editASchedule(Number(id), schedule);
+    // volvemos a generar los water schedulers
+    await generateWaterSchedulers();
+
     res.status(201).json({
       ok: true,
     });
@@ -162,7 +170,6 @@ scheduleController.get(
   passport.authenticate('jwt', { session: false }),
   async (req: Request, res: Response) => {
     const { id } = req.params;
-
 
     const garden = await gardenService.findScheduleByGardenId(Number(id));
 
