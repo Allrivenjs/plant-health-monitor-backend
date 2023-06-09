@@ -7,52 +7,50 @@ import { ActionTypeService } from '../actionType';
 import { Action, ActionTypes } from '../entity';
 
 import { ScheduleServices } from '../schedule/scheduleService';
+import { JobScheduler } from './JobScheduler';
 
 const actionService = new ActionServices();
 const actionTypeService = new ActionTypeService();
 const scheduleService = new ScheduleServices();
 
-const jobs = [];
-
-// TODO: Make a better way to identify jobs by some kind of id and cancel them manually.
-// Maybe creating a new field in the Schedule entity and storing the id of the job currently
-// holding that schedule, but i'll do it later
-export const cancelAllJobs = () => {
-  console.log('eliminando todos los jobs');
-  for (const job of jobs) {
-    job.cancel();
-  }
-};
-
-// cancel job by id
-// export const cancelWaterSchedulerJob = (id: number) => {
-//   const deleted = scheduler.cancelJob(`watering - scheduleId:${id}`);
-//   console.log(deleted);
-//   return deleted;
-// };
-
 export const generateWaterSchedulers = async () => {
+  console.log('*********************************');
+  console.log('***Generating water schedulers***');
+  console.log('*********************************');
+
   const schedules = await scheduleService.findAll();
+  const nNonActiveSchedules = schedules.filter(({ active }) => !active).length;
+
   console.log(
-    schedules.filter(({ active }) => !active).length +
-      ' non active schedules found...'
+    schedules.length,
+    ' schedules found, ',
+    nNonActiveSchedules,
+    ' non active'
   );
 
   for (const schedule of schedules) {
     if (schedule.active) continue;
 
-    console.log('executing job for schedule ', schedule.id);
-
     for (const dayOfSchedule of schedule.daysOfSchedule) {
-      const wateringJob = scheduler.scheduleJob(
-        `watering - scheduleId:${schedule.id}`,
-        `* * * * ${dayOfSchedule.dayNumber}`,
+      if (!dayOfSchedule.active) continue;
 
-        // `* * * ? * *`, // every second
-        // `0 * * ? * *`, // every minute
+      console.log(
+        '*** creating a new job for the schedule ',
+        schedule.id,
+        ', day ',
+        dayOfSchedule.dayNumber,
+        '-',
+        dayOfSchedule.name,
+        ' ***'
+      );
+
+      JobScheduler.createAJob(
+        schedule.id,
+        dayOfSchedule.dayNumber,
         async () => {
           console.log(
-            'ejecutando job: regado de schedule ' + schedule.id + ', día ',
+            '* executing job: watering of schedule ' + schedule.id,
+            ' ',
             dayOfSchedule.dayNumber + '-' + dayOfSchedule.name
           );
           const scheduleWithGarden =
@@ -81,14 +79,12 @@ export const generateWaterSchedulers = async () => {
           // TODO: código para mandar mensaje el dispositivo
         }
       );
-      jobs.push(wateringJob);
     }
 
     schedule.active = true;
     delete schedule.daysOfSchedule;
     await scheduleService.editASchedule(schedule.id, schedule);
   }
-};
 
-// when stopping your app
-// scheduler.stop();
+  console.log('actual jobs: ', JobScheduler.toString());
+};

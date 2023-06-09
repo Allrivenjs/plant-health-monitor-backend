@@ -18,7 +18,9 @@ export class ScheduleServices {
 
   async findAll() {
     // const relations = this.scheduleEntity.metadata.relations.map(m => m.propertyName);
-    return this.scheduleEntity.find({ relations: ['daysOfSchedule'] });
+    return this.scheduleEntity.find({
+      relations: ['daysOfSchedule'],
+    });
   }
 
   async findGardenByScheduleId(id: number) {
