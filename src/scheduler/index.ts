@@ -46,6 +46,8 @@ export const generateWaterSchedulers = async () => {
       JobScheduler.createAJob(
         schedule.id,
         dayOfSchedule.dayNumber,
+        dayOfSchedule.hour,
+        dayOfSchedule.minutes,
         async () => {
           console.log(
             '* executing job: watering of schedule ' + schedule.id,

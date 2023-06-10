@@ -67,6 +67,8 @@ scheduleController.post(
             abbreviation,
             keyName,
             req.body[keyName].cuantity,
+            req.body[keyName].hour,
+            req.body[keyName].minutes,
             req.body[keyName].active,
             newSchedule
           )
@@ -94,6 +96,8 @@ scheduleController.put(
   async (req: Request, res: Response) => {
     const { id } = req.params;
 
+    console.log(req.body);
+
     const schedule = await scheduleService.findById(Number(id));
 
     if (!schedule) {
@@ -102,6 +106,8 @@ scheduleController.put(
         message: 'Schedule not found',
       });
     }
+
+    console.log('hello');
 
     await Promise.all(
       weekdays.map(
@@ -115,6 +121,8 @@ scheduleController.put(
               abbreviation,
               keyName,
               req.body[keyName].cuantity,
+              req.body[keyName].hour,
+              req.body[keyName].minutes,
               req.body[keyName].active,
               schedule
             )

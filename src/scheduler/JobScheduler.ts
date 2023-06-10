@@ -11,10 +11,16 @@ type JobSchedule = {
 export class JobScheduler {
   static jobs: Array<JobSchedule> = [];
 
-  static createAJob(id: number, dayNumber: number, callback: () => void) {
+  static createAJob(
+    id: number,
+    dayNumber: number,
+    hour: number,
+    minutes: number,
+    callback: () => void
+  ) {
     const wateringJob = scheduleJob(
       `watering - scheduleId:${id}`,
-      `0 16 * * ${dayNumber}`, // every dayNumber at minute 0 and second 0
+      `${minutes} ${hour} * * ${dayNumber}`, // every dayNumber at minute x and second y
 
       // `* * * ? * *`, // every second
       // `0 * * ? * *`, // every minute

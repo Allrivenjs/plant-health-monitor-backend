@@ -25,7 +25,15 @@ export class DayOfSchedule {
   @Column({ default: 0 })
   cuantity: number;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule, {onDelete: 'CASCADE'})
+  @Column({ default: 0 })
+  hour: number;
+
+  @Column({ default: 0 })
+  minutes: number;
+
+  @ManyToOne(() => Schedule, (schedule) => schedule.daysOfSchedule, {
+    onDelete: 'CASCADE',
+  })
   schedule: Schedule;
 
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
@@ -42,6 +50,8 @@ export class DayOfSchedule {
     abbreviation: string,
     active: boolean,
     cuantity: number,
+    hour: number,
+    minutes: number,
     schedule: Schedule
   ) {
     dayOfSchedule.dayNumber = dayNumber;
@@ -50,6 +60,8 @@ export class DayOfSchedule {
     dayOfSchedule.abbreviation = abbreviation;
     dayOfSchedule.active = active;
     dayOfSchedule.cuantity = cuantity;
+    dayOfSchedule.hour = hour;
+    dayOfSchedule.minutes = minutes;
     dayOfSchedule.schedule = schedule;
     return dayOfSchedule;
   }
@@ -61,6 +73,8 @@ export class DayOfSchedule {
     abbreviation: string,
     active: boolean,
     cuantity: number,
+    hour: number,
+    minutes: number,
     schedule: Schedule
   ) {
     return this.assignDataToDayOfSchedule(
@@ -71,6 +85,8 @@ export class DayOfSchedule {
       abbreviation,
       active,
       cuantity,
+      hour,
+      minutes,
       schedule
     );
   }
@@ -82,6 +98,8 @@ export class DayOfSchedule {
     abbreviation: string,
     keyName: string,
     cuantity: number,
+    hour: number,
+    minutes: number,
     active: boolean,
     schedule: Schedule
   ) {
@@ -93,6 +111,8 @@ export class DayOfSchedule {
       abbreviation,
       active,
       cuantity,
+      hour,
+      minutes,
       schedule
     );
   }

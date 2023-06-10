@@ -1,18 +1,19 @@
 import Joi from 'joi';
 
-
 const id = Joi.number();
 
 const dayNumber = Joi.number();
 const active = Joi.boolean();
 const cuantity = Joi.number().max(1000);
-
-const foo = Joi.object
+const hour = Joi.number().max(23).min(0);
+const minutes = Joi.number().max(59).min(0);
 
 const dayOfTheWeek = Joi.object({
-  dayNumber: dayNumber.required(), 
+  dayNumber: dayNumber.required(),
   active: active.required(),
   cuantity: cuantity.required(),
+  hour: hour.required(),
+  minutes: minutes.required(),
 });
 
 const createAScheduleScheme = Joi.object({
@@ -39,8 +40,4 @@ const editAScheduleScheme = Joi.object({
   sunday: dayOfTheWeek.required(),
 });
 
-export {
-  createAScheduleScheme,
-  editAScheduleScheme,
-  scheduleId,
-};
+export { createAScheduleScheme, editAScheduleScheme, scheduleId };

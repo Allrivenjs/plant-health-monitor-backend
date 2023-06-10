@@ -16,6 +16,7 @@ import { weekdays } from '../constants';
 import { DayOfScheduleServices } from '../dayOfSchedule';
 import { DayOfSchedule } from '../entity/DayOfSchedule';
 import { ActionServices } from '../action';
+import { argv0 } from 'process';
 
 const gardenService = new GardenServices();
 const scheduleService = new ScheduleServices();
@@ -72,6 +73,8 @@ gardenController.post(
           abbreviation,
           keyName,
           false,
+          0,
+          0,
           0,
           gardenSchedule
         )
