@@ -1,0 +1,9 @@
+POST http://localhost:4000/api/v1/device/data
+Content-Type: application/json
+x-mac: 123
+
+{
+  "temperatura": [10],
+  "humedad": [14],
+  "luz": [25]
+}

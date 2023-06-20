@@ -19,11 +19,18 @@ export const deviceController = Router();
 deviceController.post('/data', async (req: Request, res: Response) => {
   let { temperatura, humedad, luz } = req.body;
 
+  const mac = req.headers['x-mac'];
+
+  if (!mac) {
+    return res.status(404).json({
+      ok: false,
+      message: 'No mac device provided',
+    });
+  }
+
   let temperaturaMedia = meanOfAnArray(temperatura);
   let humedadMedia = meanOfAnArray(humedad);
   let luzMedia = meanOfAnArray(luz);
-
-  const mac = req.headers['x-mac'];
 
   console.log({ temperaturaMedia, humedadMedia, luzMedia, mac });
 
@@ -34,6 +41,8 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   const pendingWateringActions = await actionService.findByActionTypePending(
     wateringActionType.id
   );
+
+  console.log({ pendingWateringActions });
 
   const watering = pendingWateringActions.length > 0;
 
@@ -54,6 +63,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   }
 
   if (temperaturaMedia < garden.min_temperature) {
+    console.log('temperatura muy baja, creando acción de regado');
     actionService.createActionWithActionType(
       garden,
       ActionTypes.LOW_TEMPERTURE
@@ -61,6 +71,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   }
 
   if (temperaturaMedia > garden.max_temperature) {
+    console.log('temperatura muy alta, creando acción de regado');
     actionService.createActionWithActionType(
       garden,
       ActionTypes.HIGH_TEMPERTURE
@@ -85,20 +96,23 @@ deviceController.post('/data', async (req: Request, res: Response) => {
       ? 75
       : 50;
 
-
   if (humedad < waterResistance - 10) {
+    console.log('humedad muy baja, creando acción de regado');
     actionService.createActionWithActionType(garden, ActionTypes.LOW_HUMIDITY);
   }
 
   if (humedad > waterResistance) {
+    console.log('humedad muy alta, creando acción de regado');
     actionService.createActionWithActionType(garden, ActionTypes.HIGH_HUMIDITY);
   }
 
   if (luz < lightResistance - 10) {
+    console.log('luz solar muy baja, creando acción de regado');
     actionService.createActionWithActionType(garden, ActionTypes.LOW_SUN);
   }
 
   if (luz > lightResistance) {
+    console.log('luz solar muy alta, creando acción de regado');
     actionService.createActionWithActionType(garden, ActionTypes.HIGH_SUN);
   }
 
@@ -118,5 +132,5 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     luz: luzMedia,
   });
 
-  res.json({ regar: !watering });
+  res.json({ regar: watering });
 });
