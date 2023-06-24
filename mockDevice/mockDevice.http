@@ -3,7 +3,7 @@ Content-Type: application/json
 x-mac: 123
 
 {
-  "temperatura": [10],
-  "humedad": [14],
+  "temperatura": [-10],
+  "humedad": [25],
   "luz": [25]
 }

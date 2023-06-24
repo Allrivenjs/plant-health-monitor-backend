@@ -132,5 +132,22 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     luz: luzMedia,
   });
 
-  res.json({ regar: watering });
+  let duration = 0;
+
+  if (pendingWateringActions.length > 0) {
+    duration = Number(pendingWateringActions[0].payload);
+  }
+
+  const tiempoDeBombeo = calcularTiempoDeBombeo(duration);
+
+  res.json({ regar: watering, duration: tiempoDeBombeo });
 });
+
+const calcularTiempoDeBombeo = (mililitros: number) => {
+  // Caudal máximo de la bomba en mililitros por minuto
+  const maxCaudal = 2000;
+  // minuto en milisegundos
+  const minuteInMiliseconds = 60000;
+
+  return (mililitros * minuteInMiliseconds) / maxCaudal;
+};

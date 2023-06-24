@@ -63,10 +63,12 @@ export const generateWaterSchedulers = async () => {
             ActionTypes.WATERING
           );
 
+          //TODO: change action payload type
+
           // cada dayOfSchedule (día de la semana correspondiente) se creara:
           // Un action
           const action = new Action();
-          action.payload = 'test';
+          action.payload = '' + dayOfSchedule.cuantity;
           action.garden = garden;
           action.pending = true;
           action.actionType = actionType;
