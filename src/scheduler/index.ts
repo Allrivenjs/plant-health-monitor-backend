@@ -77,7 +77,7 @@ export const generateWaterSchedulers = async () => {
           console.log('action creada');
 
           // se ejecutará un socket a la app mobil y se manda el action creado
-          io.emit('watering', action);
+          io.emit('new-action', action);
 
           // se mandará una petición o socket al esp8266 para regar la planta
           // TODO: código para mandar mensaje el dispositivo
