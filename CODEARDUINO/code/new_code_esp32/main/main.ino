@@ -1,6 +1,8 @@
 #include <ArduinoJson.h>
 #include <DHT.h>
-
+#include <WiFiManager.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
 
 
 // Definir el pin ADC que estás utilizando para conectar la celda fotovoltaica
@@ -11,12 +13,12 @@
 #define DHTTYPE DHT11
 #define DHTPIN 26 
 
-WiFiClient clientW;
-HTTPClient http;
-WiFiClientSecure client;
 
-const String serverAddress = "https://plant-health-monitor-backend-production.up.railway.app";  //"192.168.1.82"
-const char*  fingerprint = "14 8B 97 9B 8D 33 14 33 C6 9A 4A CA 24 AD AA B9 8F 74 3A F2";
+HTTPClient http;
+
+
+const String serverAddress = "http://pas.tappttoo.shop:4000";  //"192.168.1.82"
+const char*  fingerprint = "19 70 F0 32 7A 58 7F 31 DA ED 6A 61 00 BC 7A 2D 89 47 36 06";
 
 
 
@@ -43,11 +45,11 @@ void wifiSetup(){
 
 void InitHttp(){
   String fullRequest = serverAddress + "/test";
-  client.connect(fullRequest, 3000);
-  if(client.setFingerprint(fingerprint)){
-      http.begin(client, fullRequest);
+  //client.connect(fullRequest, 3000);
+
+   http.begin(fullRequest.c_str());
       int httpCode = http.GET();
-        if (httpCode > 0) {
+      if (httpCode > 0) {
       // Si la solicitud fue exitosa, leer la respuesta del servidor
       String payload = http.getString();
       Serial.println(httpCode);
@@ -58,10 +60,6 @@ void InitHttp(){
       Serial.println("Request failed: " + http.errorToString(httpCode));
       
     }
-  }else 
-      {
-        Serial.println("certificate doesn't match");
-      }
 }
 
 
@@ -101,7 +99,7 @@ void Fotoresistor(){
     Serial.println(" => Very bright");
   }
 
-  delay(500); // Puedes ajustar este valor según sea necesario
+
 }
 
 void sensorDHT(){
@@ -118,7 +116,6 @@ void sensorDHT(){
   Serial.print ("Humedad = ");
   Serial.print (humedad);
   Serial.println (" %");
-  delay (500);
 
 }
 
@@ -127,7 +124,7 @@ void sensorHumedad(){
    int humedad = ( 100 - ( (sensor_analog/4095.00) * 100 ) );
    Serial.print ("Humedad suelo = ");
    Serial.println (humedad);
-   delay (500);
+
 }
 
 void active_rele(){
@@ -143,17 +140,14 @@ void loop() {
   sensorHumedad();
   active_rele();
   delay (1000);
-
-
-
-
+   Serial.println("Enviando...");
    // Ejecuta otra operación cada minuto
   static unsigned long lastMinute = millis();
   if (millis() - lastMinute >= 60000) {
     // Tu código aquí...
     lastMinute = millis();
     String url =  serverAddress + "/api/v1/device/data";
-    http.begin(client, url);
+    http.begin(url.c_str());
     String jsonString;
     serializeJson(jsonDoc, jsonString);
     http.addHeader("Content-Type", "application/json");
