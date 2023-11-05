@@ -61,7 +61,8 @@ io.on('connection', (socket) => {
 });
 
 app.get('/test', (req: Request, res: Response) => {
-  console.log(io.sockets.adapter.rooms);
+  // console.log(io.sockets.adapter.rooms);
+  console.log("test")
   res.json({
     test: 'hello',
   });

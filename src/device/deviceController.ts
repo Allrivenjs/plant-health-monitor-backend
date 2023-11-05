@@ -17,7 +17,10 @@ const actionTypeService = new ActionTypeService();
 export const deviceController = Router();
 
 deviceController.post('/data', async (req: Request, res: Response) => {
-  let { temperatura, humedad, luz } = req.body;
+  let { temperaturaDHT: temperatura, humedadT: humedad, luz } = req.body;
+
+
+  console.log({ temperatura, humedad, luz });
 
   const mac = req.headers['x-mac'];
 

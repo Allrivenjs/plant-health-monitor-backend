@@ -1,4 +1,5 @@
 export const meanOfAnArray = (array: []) => {
+	if (!array) return 0;
   const sum = array.reduce((a, b) => a + b, 0);
   const avg = sum / array.length || 0;
 
