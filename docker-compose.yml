@@ -16,3 +16,4 @@ services:
       MYSQL_DATABASE: plant_health_monitor_db
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: secret
+      TZ: America/Bogota
