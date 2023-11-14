@@ -24,7 +24,7 @@ export const generateWaterSchedulers = async () => {
     schedules.length,
     ' schedules found, ',
     nNonActiveSchedules,
-    ' non active'
+    ' non active',
   );
 
   for (const schedule of schedules) {
@@ -40,7 +40,7 @@ export const generateWaterSchedulers = async () => {
         dayOfSchedule.dayNumber,
         '-',
         dayOfSchedule.name,
-        ' ***'
+        ' ***',
       );
 
       JobScheduler.createAJob(
@@ -52,7 +52,7 @@ export const generateWaterSchedulers = async () => {
           console.log(
             '* executing job: watering of schedule ' + schedule.id,
             ' ',
-            dayOfSchedule.dayNumber + '-' + dayOfSchedule.name
+            dayOfSchedule.dayNumber + '-' + dayOfSchedule.name,
           );
 
           const scheduleWithGarden =
@@ -60,7 +60,7 @@ export const generateWaterSchedulers = async () => {
           const garden = scheduleWithGarden.garden;
 
           const actionType = await actionTypeService.findByType(
-            ActionTypes.WATERING
+            ActionTypes.WATERING,
           );
 
           //TODO: change action payload type
@@ -73,6 +73,8 @@ export const generateWaterSchedulers = async () => {
           action.pending = true;
           action.actionType = actionType;
 
+          console.log("horas: " + new Date().getHours());
+
           await actionService.createAction(action);
           console.log('action creada');
 
@@ -81,7 +83,7 @@ export const generateWaterSchedulers = async () => {
 
           // se mandará una petición o socket al esp8266 para regar la planta
           // TODO: código para mandar mensaje el dispositivo
-        }
+        },
       );
     }
 

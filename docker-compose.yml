@@ -1,4 +1,4 @@
-version: "3.1"
+version: '3.1'
 
 services:
   plant_health_monitor_db:
@@ -9,10 +9,11 @@ services:
 
     command: --init-file /docker-entrypoint-initdb.d/init.sql
 
-    ports: 
-      - "3312:3306"
+    ports:
+      - '3312:3306'
 
     environment:
       MYSQL_DATABASE: plant_health_monitor_db
       MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: secret
+      TZ: America/Bogota
