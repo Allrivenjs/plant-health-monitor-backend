@@ -1,9 +1,11 @@
-POST http://localhost:4000/api/v1/device/data
+POST https://plant-health-monitor-backend-production-7bbd.up.railway.app/api/v1/device/data
 Content-Type: application/json
-x-mac: 123
+x-mac: 48:55:19:14:E3:94
 
 {
   "temperatura": [-10],
   "humedad": [25],
   "luz": [25]
 }
+
+#POST http://localhost:4000/api/v1/device/data

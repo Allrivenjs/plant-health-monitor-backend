@@ -40,11 +40,11 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   console.log({ temperaturaMedia, humedadMedia, luzMedia, mac });
 
   const wateringActionType = await actionTypeService.findByType(
-    ActionTypes.WATERING
+    ActionTypes.WATERING,
   );
 
   const pendingWateringActions = await actionService.findByActionTypePending(
-    wateringActionType.id
+    wateringActionType.id,
   );
 
   console.log({ pendingWateringActions });
@@ -55,7 +55,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     pendingWateringActions.map(async (action) => {
       action.pending = false;
       await actionService.editAAction(action.id, action);
-    })
+    }),
   );
 
   const garden = await gardenService.findByMac(mac as string);
@@ -71,7 +71,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     console.log('temperatura muy baja, creando acción de regado');
     actionService.createActionWithActionType(
       garden,
-      ActionTypes.LOW_TEMPERTURE
+      ActionTypes.LOW_TEMPERTURE,
     );
   }
 
@@ -79,7 +79,7 @@ deviceController.post('/data', async (req: Request, res: Response) => {
     console.log('temperatura muy alta, creando acción de regado');
     actionService.createActionWithActionType(
       garden,
-      ActionTypes.HIGH_TEMPERTURE
+      ActionTypes.HIGH_TEMPERTURE,
     );
   }
 
@@ -148,11 +148,8 @@ deviceController.post('/data', async (req: Request, res: Response) => {
   res.json({ regar: watering, duration: tiempoDeBombeo });
 });
 
-const calcularTiempoDeBombeo = (mililitros: number) => {
-  // Caudal máximo de la bomba en mililitros por minuto
-  const maxCaudal = 2000;
-  // minuto en milisegundos
-  const minuteInMiliseconds = 60000;
+const calcularTiempoDeBombeo = (timeSeconds: number) => {
+  const minuteInMiliseconds = 1000;
 
-  return (mililitros * minuteInMiliseconds) / maxCaudal;
+  return timeSeconds * minuteInMiliseconds;
 };
