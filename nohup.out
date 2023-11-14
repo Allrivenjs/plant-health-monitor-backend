@@ -1,0 +1,49 @@
+yarn run v1.22.19
+$ NODE_ENV=prod yarn typeorm migration:run -d ./src/data-source.ts && NODE_ENV=prod ts-node src/index.ts
+$ typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts
+prod
+query: SELECT VERSION() AS `version`
+query: SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = 'plant_health_monitor_db' AND `TABLE_NAME` = 'migrations'
+query: SELECT * FROM `plant_health_monitor_db`.`migrations` `migrations` ORDER BY `id` DESC
+No migrations are pending
+prod
+[2023/11/14 08:58:01.434][LOG] listening on *: 4000
+[2023/11/14 08:58:04.296][LOG] *********************************
+[2023/11/14 08:58:04.297][LOG] ***Reseting schedules in the db***
+[2023/11/14 08:58:04.297][LOG] *********************************
+[2023/11/14 08:58:04.318][LOG] test
+[2023/11/14 08:58:04.329][LOG] *********************************
+[2023/11/14 08:58:04.329][LOG] ***Generating water schedulers***
+[2023/11/14 08:58:04.330][LOG] *********************************
+[2023/11/14 08:58:04.332][LOG] 1  schedules found,  1  non active
+[2023/11/14 08:58:04.333][LOG] *** creating a new job for the schedule  3 , day  1 - Lunes  ***
+[2023/11/14 08:58:04.360][LOG] actual jobs:  [ { id: 3, dayNumber: 1, job: { name: 'watering - scheduleId:3' } } ]
+yarn run v1.22.19
+$ NODE_ENV=prod yarn typeorm migration:run -d ./src/data-source.ts && NODE_ENV=prod ts-node src/index.ts
+$ typeorm-ts-node-commonjs migration:run -d ./src/data-source.ts
+prod
+query: SELECT VERSION() AS `version`
+query: SELECT * FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = 'plant_health_monitor_db' AND `TABLE_NAME` = 'migrations'
+query: SELECT * FROM `plant_health_monitor_db`.`migrations` `migrations` ORDER BY `id` DESC
+No migrations are pending
+prod
+[2023/11/14 08:58:29.030][ERROR] Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1463:16)
+    at listenInCluster (node:net:1511:12)
+    at Server.listen (node:net:1599:7)
+    at Object.<anonymous> (/home/larasail/plant-health-monitor-backend/src/index.ts:71:8)
+    at Module._compile (node:internal/modules/cjs/loader:1196:14)
+    at Module.m._compile (/home/larasail/plant-health-monitor-backend/node_modules/ts-node/src/index.ts:1618:23)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1250:10)
+    at Object.require.extensions.<computed> [as .ts] (/home/larasail/plant-health-monitor-backend/node_modules/ts-node/src/index.ts:1621:12)
+    at Module.load (node:internal/modules/cjs/loader:1074:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:909:12) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+error Command failed with exit code 1.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+[2023/11/14 08:58:56.035][LOG] test

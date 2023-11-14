@@ -19,6 +19,8 @@ export const deviceController = Router();
 deviceController.post('/data', async (req: Request, res: Response) => {
   let { temperaturaDHT: temperatura, humedadT: humedad, luz } = req.body;
 
+  console.log({body: req.body})
+
 
   console.log({ temperatura, humedad, luz });
 
